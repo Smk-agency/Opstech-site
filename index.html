@@ -36,8 +36,8 @@
 
   :root{
     --bg:#0A0A08;
-    --bg-elevated: rgba(17,17,14,0.6);
-    --surface: rgba(26,26,20,0.68);
+    --bg-elevated: rgba(19,18,14,0.42);
+    --surface: rgba(30,28,22,0.5);
     --text:#F2EFE6;
     --muted:#9C9686;
     --accent:#E7D28B;
@@ -72,7 +72,7 @@
   }
   .bg-texture::after{
     content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(10,10,8,0.55) 0%, rgba(10,10,8,0.82) 45%, rgba(10,10,8,0.96) 100%);
+    background:linear-gradient(180deg, rgba(10,10,8,0.4) 0%, rgba(10,10,8,0.68) 45%, rgba(10,10,8,0.9) 100%);
   }
   @keyframes bgDrift{
     0%{ transform:scale(1) translate(0,0); }
@@ -94,7 +94,7 @@
   }
 
   h1, h2.section-headline, .hero-headline{
-    text-shadow: 0 0 40px rgba(242,239,230,0.35), 0 0 90px rgba(231,210,139,0.18);
+    text-shadow: 0 0 44px rgba(242,239,230,0.45), 0 0 96px rgba(231,210,139,0.28);
   }
 
   a{color:inherit; text-decoration:none;}
@@ -365,10 +365,12 @@
     color:var(--accent);
     transition:border-color 0.3s, background 0.3s, transform 0.3s;
   }
-  .march-chip:hover .letter, .march-chip:focus-visible .letter{
+  .march-chip:hover .letter{
     background:var(--accent); color:var(--bg); border-color:var(--accent);
     transform:translateY(-3px);
   }
+  .march-chip:focus-visible .letter{ border-color:var(--accent); }
+  .march-chip:focus-visible{ outline:none; }
   .march-chip .label{ font-size:0.62rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); line-height:1.4; }
   .march-hint{
     margin-top:18px; font-size:0.72rem; color:var(--muted);
@@ -502,17 +504,42 @@
   .vanguarda-module h4{ font-size:1.05rem; margin:14px 0 8px; }
   .vanguarda-module p{ font-size:0.9rem; }
 
-  .vanguarda-visual img{
-    border-radius:14px; border:1px solid var(--hairline);
-    transition:transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s;
+  .vanguarda-shot{
+    display:block; width:100%; padding:0; border:none; background:none;
+    position:relative; overflow:hidden; border-radius:14px;
+    -webkit-tap-highlight-color:transparent;
   }
-  .vanguarda-visual img:hover{ transform:scale(1.015); border-color:var(--accent-2); }
+  .vanguarda-shot img{
+    display:block; width:100%;
+    border-radius:14px; border:1px solid var(--hairline);
+    transition:transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, filter 0.3s;
+  }
+  .vanguarda-shot:hover img{
+    transform:scale(1.04); border-color:var(--accent-2); filter:brightness(1.08);
+  }
+  .vanguarda-shot:focus-visible{ outline:2px solid var(--accent-2); outline-offset:2px; }
+  .vanguarda-shot::after{
+    content:'Ver detalhes';
+    position:absolute; left:0; right:0; bottom:0;
+    padding:14px 16px 12px;
+    background:linear-gradient(0deg, rgba(8,8,6,0.9) 10%, transparent 100%);
+    color:var(--accent);
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;
+    text-align:left;
+    opacity:0; transform:translateY(8px);
+    transition:opacity 0.3s, transform 0.3s;
+    pointer-events:none;
+  }
+  .vanguarda-shot:hover::after{
+    opacity:1; transform:translateY(0);
+  }
   .vanguarda-callout{
     margin-top:24px; padding:20px;
     background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     border:1px solid var(--hairline); border-radius:10px;
   }
-  .vanguarda-callout img{ border-radius:6px; margin-bottom:14px; }
+  .vanguarda-callout .vanguarda-shot img{ border-radius:6px; }
+  .vanguarda-callout .vanguarda-shot{ margin-bottom:14px; border-radius:6px; }
   .vanguarda-callout .cap{ text-transform:none; letter-spacing:0.01em; font-size:0.78rem; }
 
   .vanguarda-gallery{
@@ -520,11 +547,6 @@
     margin-top:56px;
   }
   @media (min-width:700px){ .vanguarda-gallery{ grid-template-columns:1fr 1fr; } }
-  .vanguarda-gallery img{
-    border-radius:14px; border:1px solid var(--hairline); cursor:default;
-    transition:transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, filter 0.3s;
-  }
-  .vanguarda-gallery img:hover{ transform:scale(1.03); border-color:var(--accent-2); filter:brightness(1.08); }
 
   .rollout-row{
     display:grid; grid-template-columns:1fr; gap:20px;
@@ -904,19 +926,31 @@
       </div>
 
       <div class="vanguarda-visual">
-        <img src="images/vanguarda-home.jpg" alt="Tela inicial do Sistema Vanguarda, com os módulos de Análise de Risco e Planejamento">
+        <button type="button" class="vanguarda-shot" data-info="vg-home">
+          <img src="images/vanguarda-home.jpg" alt="Tela inicial do Sistema Vanguarda, com os módulos de Análise de Risco e Planejamento">
+        </button>
         <div class="vanguarda-callout">
-          <img src="images/vanguarda-risk-result.jpg" alt="Classificação de risco calculada automaticamente pelo Sistema Vanguarda">
+          <button type="button" class="vanguarda-shot" data-info="vg-risk">
+            <img src="images/vanguarda-risk-result.jpg" alt="Classificação de risco calculada automaticamente pelo Sistema Vanguarda">
+          </button>
           <p class="cap">A classificação é uma sugestão calculada. A decisão final é sempre do operador responsável.</p>
         </div>
       </div>
     </div>
 
     <div class="vanguarda-gallery">
-      <img src="images/vanguarda-map.jpg" alt="Marcação tática no mapa: barricadas, rotas de fuga e pontos de observação">
-      <img src="images/vanguarda-briefing.jpg" alt="Checklist de briefing gerado a partir do planejamento operacional">
-      <img src="images/vanguarda-medevac.jpg" alt="Anexo de plano de evacuação médica do planejamento operacional">
-      <img src="images/vanguarda-debriefing.jpg" alt="Avaliação estruturada de debriefing, por categoria, de 1 a 5">
+      <button type="button" class="vanguarda-shot" data-info="vg-map">
+        <img src="images/vanguarda-map.jpg" alt="Marcação tática no mapa: barricadas, rotas de fuga e pontos de observação">
+      </button>
+      <button type="button" class="vanguarda-shot" data-info="vg-briefing">
+        <img src="images/vanguarda-briefing.jpg" alt="Checklist de briefing gerado a partir do planejamento operacional">
+      </button>
+      <button type="button" class="vanguarda-shot" data-info="vg-medevac">
+        <img src="images/vanguarda-medevac.jpg" alt="Anexo de plano de evacuação médica do planejamento operacional">
+      </button>
+      <button type="button" class="vanguarda-shot" data-info="vg-debrief">
+        <img src="images/vanguarda-debriefing.jpg" alt="Avaliação estruturada de debriefing, por categoria, de 1 a 5">
+      </button>
     </div>
 
     <div class="rollout-row">
@@ -1076,16 +1110,16 @@
   </div>
 </footer>
 
-<!-- MARCH MODAL -->
-<div class="march-modal" id="marchModal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="march-modal-backdrop" data-march-close></div>
+<!-- INFO MODAL (M.A.R.C.H. e telas do Sistema Vanguarda) -->
+<div class="march-modal" id="infoModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="march-modal-backdrop" data-info-close></div>
   <div class="march-modal-box">
-    <button type="button" class="march-modal-close" data-march-close aria-label="Fechar">
+    <button type="button" class="march-modal-close" data-info-close aria-label="Fechar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
-    <div class="march-modal-emoji" id="marchModalEmoji"></div>
-    <h3><span class="march-modal-letter" id="marchModalLetter"></span> <span id="marchModalTitle"></span></h3>
-    <p id="marchModalText"></p>
+    <div class="march-modal-emoji" id="infoModalEmoji"></div>
+    <h3><span class="march-modal-letter" id="infoModalLetter"></span> <span id="infoModalTitle"></span></h3>
+    <p id="infoModalText"></p>
   </div>
 </div>
 
@@ -1109,51 +1143,66 @@
     });
   }
 
-  /* ===== MARCH MODAL ===== */
-  const marchContent = {
-    M: { emoji: '🩸', title: 'Hemorragia Massiva', text: 'A primeira prioridade do protocolo TCCC. Antes de qualquer outra ação, o operador identifica e controla sangramentos que ameaçam a vida, com torniquete em membros ou compressão direta em ferimentos juncionais. O Sistema TC³ registra o horário e o tipo de intervenção em segundos, sem tirar o foco do atendimento.' },
-    A: { emoji: '🫁', title: 'Vias Aéreas', text: 'Com a hemorragia sob controle, o operador avalia se o paciente consegue respirar livremente. Isso inclui reposicionamento, manobras manuais ou o uso de dispositivos de via aérea quando necessário, sempre registrado no fluxo do app.' },
-    R: { emoji: '🌬️', title: 'Respiração', text: 'Verificação da respiração e identificação de lesões torácicas graves, como pneumotórax. O Sistema TC³ guia o registro de selos torácicos (oclusivo ou valvulado) e descompressões, direto no diagrama do corpo.' },
-    C: { emoji: '❤️', title: 'Circulação', text: 'Avaliação da circulação sanguínea como um todo: pulso, sinais de choque e sangramentos que não foram identificados na etapa de hemorragia massiva. Quando necessário, o app orienta o registro de reposição volêmica.' },
-    H: { emoji: '🌡️', title: 'Hipotermia / Cabeça', text: 'Prevenção de hipotermia, mantendo o paciente aquecido, e uma avaliação neurológica básica: nível de consciência e sinais de trauma craniano. Pequenos detalhes que mudam o desfecho do atendimento.' },
-    P: { emoji: '📋', title: 'Procedimentos', text: 'Etapa final do fluxo: registro de medicações administradas, histórico M.I.S.T. e preparação para a evacuação. É o que transforma o atendimento em um documento formal, pronto para assinatura digital.' }
+  /* ===== INFO MODAL (M.A.R.C.H. + telas do Sistema Vanguarda) ===== */
+  const infoContent = {
+    M: { letter: 'M', emoji: '🩸', title: 'Hemorragia Massiva', text: 'A primeira prioridade do protocolo TCCC. Antes de qualquer outra ação, o operador identifica e controla sangramentos que ameaçam a vida, com torniquete em membros ou compressão direta em ferimentos juncionais. O Sistema TC³ registra o horário e o tipo de intervenção em segundos, sem tirar o foco do atendimento.' },
+    A: { letter: 'A', emoji: '🫁', title: 'Vias Aéreas', text: 'Com a hemorragia sob controle, o operador avalia se o paciente consegue respirar livremente. Isso inclui reposicionamento, manobras manuais ou o uso de dispositivos de via aérea quando necessário, sempre registrado no fluxo do app.' },
+    R: { letter: 'R', emoji: '🌬️', title: 'Respiração', text: 'Verificação da respiração e identificação de lesões torácicas graves, como pneumotórax. O Sistema TC³ guia o registro de selos torácicos (oclusivo ou valvulado) e descompressões, direto no diagrama do corpo.' },
+    C: { letter: 'C', emoji: '❤️', title: 'Circulação', text: 'Avaliação da circulação sanguínea como um todo: pulso, sinais de choque e sangramentos que não foram identificados na etapa de hemorragia massiva. Quando necessário, o app orienta o registro de reposição volêmica.' },
+    H: { letter: 'H', emoji: '🌡️', title: 'Hipotermia / Cabeça', text: 'Prevenção de hipotermia, mantendo o paciente aquecido, e uma avaliação neurológica básica: nível de consciência e sinais de trauma craniano. Pequenos detalhes que mudam o desfecho do atendimento.' },
+    P: { letter: 'P', emoji: '📋', title: 'Procedimentos', text: 'Etapa final do fluxo: registro de medicações administradas, histórico M.I.S.T. e preparação para a evacuação. É o que transforma o atendimento em um documento formal, pronto para assinatura digital.' },
+    'vg-home': { emoji: '🏠', title: 'Tela inicial', text: 'Acesso direto aos dois módulos principais, Análise de Risco e Planejamento, além do Painel de Controle de Arquivos, que organiza tudo o que já foi produzido em Relatórios, Planejamentos e Rascunhos.' },
+    'vg-map': { emoji: '🗺️', title: 'Marcação tática no mapa', text: 'O operador marca diretamente no mapa os pontos de interesse tático (barricadas, rotas de fuga, QG/alvo, pontos de observação), e o app calcula automaticamente o trajeto e o tempo de deslocamento até o local.' },
+    'vg-risk': { emoji: '⚠️', title: 'Classificação de risco calculada', text: 'Com base em critérios objetivos de risco e nas competências táticas necessárias, o sistema sugere automaticamente a classificação de risco, a complexidade e a unidade responsável pelo acionamento. A decisão final é sempre do operador.' },
+    'vg-briefing': { emoji: '✅', title: 'Checklist de briefing', text: 'Lista de conferência gerada a partir do planejamento: efetivo, armamento, comunicação, rotas e hospital de apoio. Cada item pode ser marcado como conferido antes da missão começar.' },
+    'vg-medevac': { emoji: '🚑', title: 'Plano de evacuação médica', text: 'Anexo obrigatório de todo planejamento: logística médica interna e externa, socorristas designados, ponto de apoio e hospitais de referência, com tempo estimado de deslocamento.' },
+    'vg-debrief': { emoji: '⭐', title: 'Avaliação de debriefing', text: 'Avaliação estruturada pós-missão, de 1 a 5 estrelas, por categoria (planejamento, inteligência, comunicação, execução e mais), com lições aprendidas e plano de ação para a próxima operação.' }
   };
-  const marchModal = document.getElementById('marchModal');
-  if (marchModal) {
-    const marchEmoji = document.getElementById('marchModalEmoji');
-    const marchLetter = document.getElementById('marchModalLetter');
-    const marchTitle = document.getElementById('marchModalTitle');
-    const marchText = document.getElementById('marchModalText');
-    let marchLastTrigger = null;
+  const infoModal = document.getElementById('infoModal');
+  if (infoModal) {
+    const infoEmoji = document.getElementById('infoModalEmoji');
+    const infoLetter = document.getElementById('infoModalLetter');
+    const infoTitle = document.getElementById('infoModalTitle');
+    const infoText = document.getElementById('infoModalText');
+    let infoLastTrigger = null;
 
-    function openMarch(letter){
-      const data = marchContent[letter];
+    function openInfo(key){
+      const data = infoContent[key];
       if (!data) return;
-      marchEmoji.textContent = data.emoji;
-      marchLetter.textContent = letter;
-      marchTitle.textContent = data.title;
-      marchText.textContent = data.text;
-      marchModal.classList.add('active');
-      marchModal.setAttribute('aria-hidden', 'false');
+      infoEmoji.textContent = data.emoji;
+      infoLetter.textContent = data.letter || '';
+      infoLetter.style.display = data.letter ? '' : 'none';
+      infoTitle.textContent = data.title;
+      infoText.textContent = data.text;
+      infoModal.classList.add('active');
+      infoModal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
     }
-    function closeMarch(){
-      marchModal.classList.remove('active');
-      marchModal.setAttribute('aria-hidden', 'true');
+    function closeInfo(){
+      infoModal.classList.remove('active');
+      infoModal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      if (marchLastTrigger) marchLastTrigger.focus();
+      if (infoLastTrigger) infoLastTrigger.focus();
     }
-    document.querySelectorAll('.march-chip').forEach(chip => {
+    document.querySelectorAll('.march-chip[data-march]').forEach(chip => {
       chip.addEventListener('click', () => {
-        marchLastTrigger = chip;
-        openMarch(chip.getAttribute('data-march'));
+        infoLastTrigger = chip;
+        openInfo(chip.getAttribute('data-march'));
+        chip.blur();
       });
     });
-    marchModal.querySelectorAll('[data-march-close]').forEach(el => {
-      el.addEventListener('click', closeMarch);
+    document.querySelectorAll('.vanguarda-shot[data-info]').forEach(shot => {
+      shot.addEventListener('click', () => {
+        infoLastTrigger = shot;
+        openInfo(shot.getAttribute('data-info'));
+        shot.blur();
+      });
+    });
+    infoModal.querySelectorAll('[data-info-close]').forEach(el => {
+      el.addEventListener('click', closeInfo);
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && marchModal.classList.contains('active')) closeMarch();
+      if (e.key === 'Escape' && infoModal.classList.contains('active')) closeInfo();
     });
   }
 
