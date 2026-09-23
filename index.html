@@ -421,11 +421,14 @@
     border:1px solid var(--hairline); border-radius:10px;
     padding:32px; background:var(--surface);
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    transition:border-color 0.3s, transform 0.3s;
   }
+  .ecosystem-card:hover{ border-color:var(--accent-2); transform:translateY(-4px); }
   .ecosystem-card h3{ margin:10px 0 10px; font-size:clamp(1.25rem,2vw,1.6rem); }
   .ecosystem-card p{ font-size:0.92rem; }
   .ecosystem-card-new{ border-color:var(--accent-2); }
   .ecosystem-card-new .cap{ color:var(--accent); }
+  .ecosystem-card-new:hover{ border-color:var(--accent); }
 
   .vanguarda-layout{
     display:grid; grid-template-columns:1fr; gap:48px; align-items:start;
@@ -438,7 +441,9 @@
 
   .vanguarda-visual img{
     border-radius:14px; border:1px solid var(--hairline);
+    transition:transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s;
   }
+  .vanguarda-visual img:hover{ transform:scale(1.015); border-color:var(--accent-2); }
   .vanguarda-callout{
     margin-top:24px; padding:20px;
     background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
@@ -452,13 +457,21 @@
     margin-top:56px;
   }
   @media (min-width:700px){ .vanguarda-gallery{ grid-template-columns:1fr 1fr; } }
-  .vanguarda-gallery img{ border-radius:14px; border:1px solid var(--hairline); }
+  .vanguarda-gallery img{
+    border-radius:14px; border:1px solid var(--hairline); cursor:default;
+    transition:transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, filter 0.3s;
+  }
+  .vanguarda-gallery img:hover{ transform:scale(1.03); border-color:var(--accent-2); filter:brightness(1.08); }
 
   .rollout-row{
     display:grid; grid-template-columns:1fr; gap:20px;
     margin-top:64px; padding-top:48px; border-top:1px solid var(--hairline);
   }
   @media (min-width:700px){ .rollout-row{ grid-template-columns:repeat(4,1fr); gap:24px; } }
+  .rollout-step{ transition:transform 0.3s; }
+  .rollout-step:hover{ transform:translateY(-4px); }
+  .rollout-step:hover .error-num{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  .rollout-step .error-num{ transition:background 0.3s, color 0.3s, border-color 0.3s; }
   .rollout-step h4{ font-size:0.98rem; margin:14px 0 6px; }
   .rollout-step p{ font-size:0.85rem; }
 
@@ -1275,6 +1288,47 @@
       gsap.from(el, {
         opacity: 0, y: 30, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+
+    document.querySelectorAll('.ecosystem-row').forEach(row => {
+      gsap.from(row.querySelectorAll('.ecosystem-card'), {
+        opacity: 0, y: 36, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: row, start: 'top 88%' }
+      });
+    });
+    document.querySelectorAll('.vanguarda-modules').forEach(list => {
+      gsap.from(list.querySelectorAll('.vanguarda-module'), {
+        opacity: 0, x: -24, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: list, start: 'top 85%' }
+      });
+    });
+    gsap.utils.toArray('.vanguarda-seal').forEach(el => {
+      gsap.from(el, {
+        opacity: 0, scale: 0.8, rotate: -8, duration: 0.7, ease: 'back.out(1.6)',
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+    gsap.utils.toArray('.vanguarda-visual').forEach(el => {
+      gsap.from(el.querySelector('img'), {
+        opacity: 0, y: 30, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 82%' }
+      });
+      gsap.from(el.querySelector('.vanguarda-callout'), {
+        opacity: 0, y: 30, duration: 0.7, delay: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 75%' }
+      });
+    });
+    document.querySelectorAll('.vanguarda-gallery').forEach(gallery => {
+      gsap.from(gallery.querySelectorAll('img'), {
+        opacity: 0, y: 36, scale: 0.96, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: gallery, start: 'top 85%' }
+      });
+    });
+    document.querySelectorAll('.rollout-row').forEach(row => {
+      gsap.from(row.querySelectorAll('.rollout-step'), {
+        opacity: 0, y: 28, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: row, start: 'top 88%' }
       });
     });
   }
