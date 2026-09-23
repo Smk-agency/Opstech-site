@@ -352,7 +352,10 @@
     margin-top:40px;
   }
   @media (min-width:600px){ .march-row{ grid-template-columns:repeat(6,1fr); } }
-  .march-chip{ text-align:center; }
+  .march-chip{
+    text-align:center; width:100%; padding:0;
+    font-family:inherit; cursor:pointer;
+  }
   .march-chip .letter{
     width:48px; height:48px; margin:0 auto 10px;
     border:1px solid var(--accent-2);
@@ -360,10 +363,53 @@
     display:flex; align-items:center; justify-content:center;
     font-family:'Inter',sans-serif; font-weight:800; font-size:1.1rem;
     color:var(--accent);
-    transition:border-color 0.3s, background 0.3s;
+    transition:border-color 0.3s, background 0.3s, transform 0.3s;
   }
-  .march-chip:hover .letter{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  .march-chip:hover .letter, .march-chip:focus-visible .letter{
+    background:var(--accent); color:var(--bg); border-color:var(--accent);
+    transform:translateY(-3px);
+  }
   .march-chip .label{ font-size:0.62rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); line-height:1.4; }
+  .march-hint{
+    margin-top:18px; font-size:0.72rem; color:var(--muted);
+    text-align:center; opacity:0.75;
+  }
+
+  /* ===== MARCH MODAL ===== */
+  .march-modal{
+    position:fixed; inset:0; z-index:200;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; visibility:hidden;
+    transition:opacity 0.3s, visibility 0.3s;
+  }
+  .march-modal.active{ opacity:1; visibility:visible; }
+  .march-modal-backdrop{
+    position:absolute; inset:0;
+    background:rgba(6,6,5,0.82);
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  }
+  .march-modal-box{
+    position:relative; z-index:1;
+    width:100%; max-width:480px;
+    background:var(--bg-elevated); border:1px solid var(--hairline);
+    border-radius:14px; padding:40px 32px;
+    transform:translateY(24px) scale(0.97); opacity:0;
+    transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.35s;
+  }
+  .march-modal.active .march-modal-box{ transform:translateY(0) scale(1); opacity:1; }
+  .march-modal-close{
+    position:absolute; top:16px; right:16px;
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); transition:color 0.3s, background 0.3s;
+  }
+  .march-modal-close:hover{ color:var(--text); background:var(--surface); }
+  .march-modal-close svg{ width:18px; height:18px; }
+  .march-modal-emoji{ font-size:2.5rem; line-height:1; margin-bottom:16px; }
+  .march-modal-letter{ color:var(--accent); }
+  .march-modal-box h3{ font-size:clamp(1.25rem,3vw,1.6rem); margin-bottom:14px; }
+  .march-modal-box p{ font-size:0.95rem; }
 
   .product-visual{
     background:var(--surface);
@@ -430,11 +476,28 @@
   .ecosystem-card-new .cap{ color:var(--accent); }
   .ecosystem-card-new:hover{ border-color:var(--accent); }
 
+  .vanguarda-product-header{
+    display:flex; align-items:center; gap:20px;
+    margin-top:64px; margin-bottom:36px;
+    padding:24px; border:1px solid var(--accent-2); border-radius:12px;
+    background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  @media (min-width:600px){ .vanguarda-product-header{ gap:28px; padding:28px 32px; } }
+  .vanguarda-product-header .vanguarda-seal{
+    width:76px; height:76px; margin-bottom:0; flex-shrink:0; border-radius:10px;
+    object-fit:cover; object-position:top center;
+  }
+  @media (min-width:600px){ .vanguarda-product-header .vanguarda-seal{ width:96px; height:96px; } }
+  .vanguarda-product-header .eyebrow{ margin-bottom:6px; }
+  .vanguarda-wordmark{
+    font-size:clamp(1.6rem,4.5vw,2.75rem); font-weight:800; letter-spacing:-0.01em;
+    text-shadow: 0 0 40px rgba(242,239,230,0.3), 0 0 80px rgba(231,210,139,0.2);
+  }
+
   .vanguarda-layout{
     display:grid; grid-template-columns:1fr; gap:48px; align-items:start;
   }
   @media (min-width:960px){ .vanguarda-layout{ grid-template-columns:1.1fr 0.9fr; gap:72px; } }
-  .vanguarda-seal{ width:72px; height:auto; margin-bottom:24px; border-radius:8px; }
   .vanguarda-modules{ margin-top:40px; display:flex; flex-direction:column; gap:28px; }
   .vanguarda-module h4{ font-size:1.05rem; margin:14px 0 8px; }
   .vanguarda-module p{ font-size:0.9rem; }
@@ -725,13 +788,14 @@
         <h2 class="section-headline">O que é o Sistema TC³?</h2>
         <p>O Sistema TC³ é uma solução digital da OpsTech Brasil que moderniza o Atendimento Pré-Hospitalar Tático (APH Tático). Ele guia o operador pelo protocolo TCCC (Tactical Combat Casualty Care) em tempo real, seguindo a sequência M.A.R.C.H., de forma rápida, segura e padronizada, do primeiro atendimento até a entrega do paciente.</p>
         <div class="march-row">
-          <div class="march-chip"><div class="letter">M</div><div class="label">Hemorragia Massiva</div></div>
-          <div class="march-chip"><div class="letter">A</div><div class="label">Vias Aéreas</div></div>
-          <div class="march-chip"><div class="letter">R</div><div class="label">Respiração</div></div>
-          <div class="march-chip"><div class="letter">C</div><div class="label">Circulação</div></div>
-          <div class="march-chip"><div class="letter">H</div><div class="label">Hipotermia / Cabeça</div></div>
-          <div class="march-chip"><div class="letter">P</div><div class="label">Procedimentos</div></div>
+          <button type="button" class="march-chip" data-march="M"><div class="letter">M</div><div class="label">Hemorragia Massiva</div></button>
+          <button type="button" class="march-chip" data-march="A"><div class="letter">A</div><div class="label">Vias Aéreas</div></button>
+          <button type="button" class="march-chip" data-march="R"><div class="letter">R</div><div class="label">Respiração</div></button>
+          <button type="button" class="march-chip" data-march="C"><div class="letter">C</div><div class="label">Circulação</div></button>
+          <button type="button" class="march-chip" data-march="H"><div class="letter">H</div><div class="label">Hipotermia / Cabeça</div></button>
+          <button type="button" class="march-chip" data-march="P"><div class="letter">P</div><div class="label">Procedimentos</div></button>
         </div>
+        <p class="march-hint">Toque em uma etapa para ver os detalhes.</p>
       </div>
       <div class="product-visual">
         <img src="images/app-vitals-bar.png" alt="Barra de sinais vitais do Sistema TC³: TQs, SpO2, GCS e status pulmonar">
@@ -808,10 +872,16 @@
       </div>
     </div>
 
+    <div class="vanguarda-product-header">
+      <img src="images/vanguarda-badge.jpg" alt="Logo do Sistema Vanguarda" class="vanguarda-seal">
+      <div>
+        <span class="eyebrow">Novo aplicativo OpsTech</span>
+        <h3 class="vanguarda-wordmark">Sistema Vanguarda</h3>
+      </div>
+    </div>
+
     <div class="vanguarda-layout">
       <div class="vanguarda-text">
-        <img src="images/vanguarda-badge.jpg" alt="Selo do Sistema Vanguarda" class="vanguarda-seal">
-        <h3>O que é o Sistema Vanguarda?</h3>
         <p>O Sistema Vanguarda é uma solução digital da OpsTech Brasil que estrutura duas etapas críticas de uma operação policial: a análise de risco do local a ser trabalhado e o planejamento operacional da missão. Ele centraliza mapas, imagens do local, previsão meteorológica, organização de equipes e classificação objetiva de risco em um único fluxo, gerando documentos formais prontos para assinatura digital.</p>
 
         <div class="vanguarda-modules">
@@ -1006,6 +1076,19 @@
   </div>
 </footer>
 
+<!-- MARCH MODAL -->
+<div class="march-modal" id="marchModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="march-modal-backdrop" data-march-close></div>
+  <div class="march-modal-box">
+    <button type="button" class="march-modal-close" data-march-close aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <div class="march-modal-emoji" id="marchModalEmoji"></div>
+    <h3><span class="march-modal-letter" id="marchModalLetter"></span> <span id="marchModalTitle"></span></h3>
+    <p id="marchModalText"></p>
+  </div>
+</div>
+
 <script>
 (function(){
   const isMobile = window.matchMedia('(max-width: 900px)').matches || 'ontouchstart' in window;
@@ -1023,6 +1106,54 @@
         hamburger.classList.remove('active');
         mobileMenu.classList.remove('active');
       });
+    });
+  }
+
+  /* ===== MARCH MODAL ===== */
+  const marchContent = {
+    M: { emoji: '🩸', title: 'Hemorragia Massiva', text: 'A primeira prioridade do protocolo TCCC. Antes de qualquer outra ação, o operador identifica e controla sangramentos que ameaçam a vida, com torniquete em membros ou compressão direta em ferimentos juncionais. O Sistema TC³ registra o horário e o tipo de intervenção em segundos, sem tirar o foco do atendimento.' },
+    A: { emoji: '🫁', title: 'Vias Aéreas', text: 'Com a hemorragia sob controle, o operador avalia se o paciente consegue respirar livremente. Isso inclui reposicionamento, manobras manuais ou o uso de dispositivos de via aérea quando necessário, sempre registrado no fluxo do app.' },
+    R: { emoji: '🌬️', title: 'Respiração', text: 'Verificação da respiração e identificação de lesões torácicas graves, como pneumotórax. O Sistema TC³ guia o registro de selos torácicos (oclusivo ou valvulado) e descompressões, direto no diagrama do corpo.' },
+    C: { emoji: '❤️', title: 'Circulação', text: 'Avaliação da circulação sanguínea como um todo: pulso, sinais de choque e sangramentos que não foram identificados na etapa de hemorragia massiva. Quando necessário, o app orienta o registro de reposição volêmica.' },
+    H: { emoji: '🌡️', title: 'Hipotermia / Cabeça', text: 'Prevenção de hipotermia, mantendo o paciente aquecido, e uma avaliação neurológica básica: nível de consciência e sinais de trauma craniano. Pequenos detalhes que mudam o desfecho do atendimento.' },
+    P: { emoji: '📋', title: 'Procedimentos', text: 'Etapa final do fluxo: registro de medicações administradas, histórico M.I.S.T. e preparação para a evacuação. É o que transforma o atendimento em um documento formal, pronto para assinatura digital.' }
+  };
+  const marchModal = document.getElementById('marchModal');
+  if (marchModal) {
+    const marchEmoji = document.getElementById('marchModalEmoji');
+    const marchLetter = document.getElementById('marchModalLetter');
+    const marchTitle = document.getElementById('marchModalTitle');
+    const marchText = document.getElementById('marchModalText');
+    let marchLastTrigger = null;
+
+    function openMarch(letter){
+      const data = marchContent[letter];
+      if (!data) return;
+      marchEmoji.textContent = data.emoji;
+      marchLetter.textContent = letter;
+      marchTitle.textContent = data.title;
+      marchText.textContent = data.text;
+      marchModal.classList.add('active');
+      marchModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMarch(){
+      marchModal.classList.remove('active');
+      marchModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (marchLastTrigger) marchLastTrigger.focus();
+    }
+    document.querySelectorAll('.march-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        marchLastTrigger = chip;
+        openMarch(chip.getAttribute('data-march'));
+      });
+    });
+    marchModal.querySelectorAll('[data-march-close]').forEach(el => {
+      el.addEventListener('click', closeMarch);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && marchModal.classList.contains('active')) closeMarch();
     });
   }
 
@@ -1303,11 +1434,18 @@
         scrollTrigger: { trigger: list, start: 'top 85%' }
       });
     });
-    gsap.utils.toArray('.vanguarda-seal').forEach(el => {
+    gsap.utils.toArray('.vanguarda-product-header').forEach(el => {
       gsap.from(el, {
-        opacity: 0, scale: 0.8, rotate: -8, duration: 0.7, ease: 'back.out(1.6)',
-        scrollTrigger: { trigger: el, start: 'top 88%' }
+        opacity: 0, y: 20, duration: 0.6, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 90%' }
       });
+      const seal = el.querySelector('.vanguarda-seal');
+      if (seal) {
+        gsap.from(seal, {
+          opacity: 0, scale: 0.7, rotate: -10, duration: 0.7, delay: 0.1, ease: 'back.out(1.6)',
+          scrollTrigger: { trigger: el, start: 'top 90%' }
+        });
+      }
     });
     gsap.utils.toArray('.vanguarda-visual').forEach(el => {
       gsap.from(el.querySelector('img'), {
