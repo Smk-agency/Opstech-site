@@ -411,6 +411,59 @@
     .pin-dot:first-child{ opacity:1; }
   }
 
+  /* ===== ECOSSISTEMA / VANGUARDA ===== */
+  .ecosystem-row{
+    display:grid; grid-template-columns:1fr; gap:20px;
+    margin-top:56px; margin-bottom:72px;
+  }
+  @media (min-width:700px){ .ecosystem-row{ grid-template-columns:1fr 1fr; gap:24px; } }
+  .ecosystem-card{
+    border:1px solid var(--hairline); border-radius:10px;
+    padding:32px; background:var(--surface);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  .ecosystem-card h3{ margin:10px 0 10px; font-size:clamp(1.25rem,2vw,1.6rem); }
+  .ecosystem-card p{ font-size:0.92rem; }
+  .ecosystem-card-new{ border-color:var(--accent-2); }
+  .ecosystem-card-new .cap{ color:var(--accent); }
+
+  .vanguarda-layout{
+    display:grid; grid-template-columns:1fr; gap:48px; align-items:start;
+  }
+  @media (min-width:960px){ .vanguarda-layout{ grid-template-columns:1.1fr 0.9fr; gap:72px; } }
+  .vanguarda-seal{ width:72px; height:auto; margin-bottom:24px; border-radius:8px; }
+  .vanguarda-modules{ margin-top:40px; display:flex; flex-direction:column; gap:28px; }
+  .vanguarda-module h4{ font-size:1.05rem; margin:14px 0 8px; }
+  .vanguarda-module p{ font-size:0.9rem; }
+
+  .vanguarda-visual img{
+    border-radius:14px; border:1px solid var(--hairline);
+  }
+  .vanguarda-callout{
+    margin-top:24px; padding:20px;
+    background:var(--surface); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--hairline); border-radius:10px;
+  }
+  .vanguarda-callout img{ border-radius:6px; margin-bottom:14px; }
+  .vanguarda-callout .cap{ text-transform:none; letter-spacing:0.01em; font-size:0.78rem; }
+
+  .vanguarda-gallery{
+    display:grid; grid-template-columns:1fr; gap:20px;
+    margin-top:56px;
+  }
+  @media (min-width:700px){ .vanguarda-gallery{ grid-template-columns:1fr 1fr; } }
+  .vanguarda-gallery img{ border-radius:14px; border:1px solid var(--hairline); }
+
+  .rollout-row{
+    display:grid; grid-template-columns:1fr; gap:20px;
+    margin-top:64px; padding-top:48px; border-top:1px solid var(--hairline);
+  }
+  @media (min-width:700px){ .rollout-row{ grid-template-columns:repeat(4,1fr); gap:24px; } }
+  .rollout-step h4{ font-size:0.98rem; margin:14px 0 6px; }
+  .rollout-step p{ font-size:0.85rem; }
+
+  .vanguarda-cta{ text-align:center; margin-top:56px; }
+
   /* ===== LINHA DE FRENTE ===== */
   .frontline{ position:relative; overflow:hidden; }
   .frontline-grid{
@@ -549,6 +602,7 @@
       <a href="#sobre">Sobre</a>
       <a href="#sistema-tc3">Sistema TC³</a>
       <a href="#showcase">Por dentro</a>
+      <a href="#vanguarda">Vanguarda</a>
       <a href="#contato">Contato</a>
     </div>
     <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Sistema%20TC%C2%B3" target="_blank" rel="noopener" class="nav-cta">
@@ -564,6 +618,7 @@
   <a href="#sobre">Sobre</a>
   <a href="#sistema-tc3">Sistema TC³</a>
   <a href="#showcase">Por dentro</a>
+      <a href="#vanguarda">Vanguarda</a>
   <a href="#contato">Contato</a>
   <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Sistema%20TC%C2%B3" target="_blank" rel="noopener" class="nav-cta">Falar no WhatsApp</a>
 </div>
@@ -707,6 +762,99 @@
   </div>
 </section>
 
+<!-- ECOSSISTEMA OPSTECH / SISTEMA VANGUARDA -->
+<section class="bg-elevated" id="vanguarda">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Ecossistema OpsTech</span>
+      <h2 class="section-headline">O ciclo completo de uma operação de risco</h2>
+      <p>O Sistema TC³ cuida do atendimento em campo. O novo Sistema Vanguarda cuida da preparação: análise de risco e planejamento operacional, antes da missão começar. Juntos, os dois sistemas acompanham a operação do início ao fim.</p>
+    </div>
+
+    <div class="ecosystem-row">
+      <div class="ecosystem-card">
+        <span class="cap">Em campo</span>
+        <h3>Sistema TC³</h3>
+        <p>Atendimento pré-hospitalar tático em tempo real, guiado pelo protocolo TCCC durante a missão.</p>
+      </div>
+      <div class="ecosystem-card ecosystem-card-new">
+        <span class="cap">Novo · Em lançamento</span>
+        <h3>Sistema Vanguarda</h3>
+        <p>Análise de risco e planejamento operacional digital, concluídos antes da operação começar.</p>
+      </div>
+    </div>
+
+    <div class="vanguarda-layout">
+      <div class="vanguarda-text">
+        <img src="images/vanguarda-badge.jpg" alt="Selo do Sistema Vanguarda" class="vanguarda-seal">
+        <h3>O que é o Sistema Vanguarda?</h3>
+        <p>O Sistema Vanguarda é uma solução digital da OpsTech Brasil que estrutura duas etapas críticas de uma operação policial: a análise de risco do local a ser trabalhado e o planejamento operacional da missão. Ele centraliza mapas, imagens do local, previsão meteorológica, organização de equipes e classificação objetiva de risco em um único fluxo, gerando documentos formais prontos para assinatura digital.</p>
+
+        <div class="vanguarda-modules">
+          <div class="vanguarda-module">
+            <span class="error-num">01</span>
+            <h4>Análise de Risco</h4>
+            <p>Assistente de 6 passos, da identificação do documento à assinatura digital, com marcação tática no mapa e classificação objetiva de risco e complexidade (SIOT).</p>
+          </div>
+          <div class="vanguarda-module">
+            <span class="error-num">02</span>
+            <h4>Planejamento Operacional</h4>
+            <p>Assistente de 11 etapas cobrindo forças amigas, teatro de operações, meteorologia, comunicações, apoio tático e plano de evacuação médica.</p>
+          </div>
+          <div class="vanguarda-module">
+            <span class="error-num">03</span>
+            <h4>Briefing, Pós-Operação e Debriefing</h4>
+            <p>Checklist antes da missão, registro objetivo do resultado logo após a execução e avaliação estruturada, com lições aprendidas e plano de ação.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="vanguarda-visual">
+        <img src="images/vanguarda-home.jpg" alt="Tela inicial do Sistema Vanguarda, com os módulos de Análise de Risco e Planejamento">
+        <div class="vanguarda-callout">
+          <img src="images/vanguarda-risk-result.jpg" alt="Classificação de risco calculada automaticamente pelo Sistema Vanguarda">
+          <p class="cap">A classificação é uma sugestão calculada. A decisão final é sempre do operador responsável.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="vanguarda-gallery">
+      <img src="images/vanguarda-briefing.jpg" alt="Checklist de briefing gerado a partir do planejamento operacional">
+      <img src="images/vanguarda-debriefing.jpg" alt="Avaliação estruturada de debriefing, por categoria, de 1 a 5">
+    </div>
+
+    <div class="rollout-row">
+      <div class="rollout-step">
+        <span class="error-num">01</span>
+        <h4>Demonstração técnica</h4>
+        <p>Apresentação ao vivo do aplicativo em funcionamento real.</p>
+      </div>
+      <div class="rollout-step">
+        <span class="error-num">02</span>
+        <h4>Piloto gratuito</h4>
+        <p>Implantação em uma unidade selecionada, sem custo.</p>
+      </div>
+      <div class="rollout-step">
+        <span class="error-num">03</span>
+        <h4>Implantação e treinamento</h4>
+        <p>Formação completa dos operadores responsáveis.</p>
+      </div>
+      <div class="rollout-step">
+        <span class="error-num">04</span>
+        <h4>Expansão</h4>
+        <p>Escalabilidade para outras unidades e estados.</p>
+      </div>
+    </div>
+
+    <div class="vanguarda-cta">
+      <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Sistema%20Vanguarda" target="_blank" rel="noopener" class="btn btn-primary">
+        Quero conhecer o Sistema Vanguarda
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- LINHA DE FRENTE -->
 <section class="frontline">
   <div class="wrap frontline-grid">
@@ -824,6 +972,7 @@
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="#sistema-tc3">Sistema TC³</a></li>
           <li><a href="#showcase">Por dentro</a></li>
+          <li><a href="#vanguarda">Vanguarda</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
       </div>
