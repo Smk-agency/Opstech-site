@@ -180,9 +180,15 @@
     font-weight:700;
     letter-spacing:0.02em;
     transition:background 0.3s, transform 0.3s;
+    animation:ctaPulse 3.2s ease-in-out infinite;
   }
-  .nav-cta:hover{ background:var(--accent-hover); transform:translateY(-2px); }
+  .nav-cta:hover{ background:var(--accent-hover); transform:translateY(-2px); animation-play-state:paused; }
   @media (min-width:600px){ .nav-cta{ display:inline-flex; } }
+  @keyframes ctaPulse{
+    0%, 100%{ box-shadow:0 0 0 0 rgba(231,210,139,0.35); }
+    50%{ box-shadow:0 0 0 8px rgba(231,210,139,0); }
+  }
+  @media (prefers-reduced-motion:reduce){ .nav-cta{ animation:none; } }
 
   .hamburger{
     display:flex; flex-direction:column; gap:5px;
@@ -423,41 +429,44 @@
   .product-visual img{ border-radius:8px; margin-bottom:20px; }
   .product-visual .cap{ text-align:center; }
 
-  /* ===== PIN SHOWCASE ===== */
-  .section-pinned{ background:var(--bg); overflow:hidden; }
-  .pin-inner{
-    display:grid; grid-template-columns:1fr; gap:48px;
-  }
-  @media (min-width:960px){ .pin-inner{ grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:center; } }
+  /* ===== SHOWCASE (cartas empilhando, sem travar o scroll) ===== */
+  .stack-section{ position:relative; padding-block:0; }
+  .stack-section > .wrap{ padding-block:60px 0; }
+  @media (min-width:768px){ .stack-section > .wrap{ padding-block:96px 0; } }
+  @media (min-width:1024px){ .stack-section > .wrap{ padding-block:140px 0; } }
 
-  .pin-text-headlines{ position:relative; }
-  .pin-panel{ margin-bottom:56px; }
-  .pin-panel:last-child{ margin-bottom:0; }
-  .pin-headline{ margin-bottom:16px; font-size:clamp(1.5rem, 2.6vw, 2.25rem); }
-  .pin-caption{ max-width:460px; }
-
-  .pin-visual{
-    display:grid; grid-template-columns:1fr 1fr; gap:20px;
+  .stack-card{
+    position:sticky; top:76px;
+    min-height:calc(100vh - 76px);
+    display:flex; align-items:center;
+    background:var(--bg-elevated);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--hairline);
+    box-shadow:0 -30px 60px rgba(0,0,0,0.45);
+    padding-block:60px;
   }
-  .pin-phone{ border-radius:20px; border:1px solid var(--hairline); }
-  .pin-detail{ border-radius:14px; border:1px solid var(--hairline); align-self:center; }
+  @media (min-width:768px){ .stack-card{ padding-block:96px; top:88px; min-height:calc(100vh - 88px); } }
 
-  @media (min-width:960px){
-    .pin-visual{ position:relative; height:560px; }
+  .stack-inner{
+    display:grid; grid-template-columns:1fr; gap:40px; align-items:center;
   }
+  @media (min-width:960px){ .stack-inner{ grid-template-columns:0.9fr 1.1fr; gap:64px; } }
 
-  .pin-dots{ display:none; }
-  @media (min-width:960px){
-    .pin-dots{
-      display:flex; justify-content:center; gap:10px;
-      margin-top:40px;
-    }
-    .pin-dot{
-      width:6px; height:6px; border-radius:50%;
-      background:var(--accent); opacity:0.35;
-    }
-    .pin-dot:first-child{ opacity:1; }
+  .stack-text p{ max-width:460px; margin-top:16px; }
+
+  .stack-visual{ position:relative; }
+  .stack-visual img{
+    border-radius:20px; border:1px solid var(--hairline);
+    width:100%;
   }
+  .stack-visual .stack-detail{
+    position:absolute; left:50%; bottom:-28px;
+    width:70%; max-width:280px;
+    transform:translateX(-50%);
+    border-radius:14px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.5);
+  }
+  .stack-visual .stack-wide{ border-radius:14px; }
 
   /* ===== ECOSSISTEMA / VANGUARDA ===== */
   .ecosystem-row{
@@ -626,7 +635,7 @@
   .form-row{ display:grid; gap:20px; grid-template-columns:1fr; margin-bottom:20px; }
   @media (min-width:600px){ .form-row.two{ grid-template-columns:1fr 1fr; } }
   .field label{ display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:8px; }
-  .field input, .field textarea{
+  .field input, .field textarea, .field select{
     width:100%;
     background:var(--bg);
     border:1px solid var(--hairline);
@@ -637,8 +646,13 @@
     font-size:0.92rem;
     transition:border-color 0.3s;
   }
-  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--accent); }
+  .field input:focus, .field textarea:focus, .field select:focus{ outline:none; border-color:var(--accent); }
   .field textarea{ resize:vertical; min-height:110px; }
+  .field select{ cursor:pointer; appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239C9686' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 16px center;
+  }
+  .field select option{ background:var(--bg); color:var(--text); }
   .form-success{
     display:none;
     margin-top:16px;
@@ -827,36 +841,46 @@
   </div>
 </section>
 
-<!-- PIN SHOWCASE -->
-<section class="section-pinned" id="showcase">
+<!-- SHOWCASE (cartas empilhando ao rolar) -->
+<section class="stack-section" id="showcase">
   <div class="wrap">
     <span class="eyebrow">Por dentro do Sistema TC³</span>
-    <div class="pin-inner">
-      <div class="pin-text-headlines">
-        <div class="pin-panel">
-          <h2 class="pin-headline">Sinais vitais em tempo real.</h2>
-          <p class="pin-caption">TQs, SpO2, GCS e status pulmonar sempre visíveis na tela principal, atualizados conforme o atendimento evolui em campo.</p>
-        </div>
-        <div class="pin-panel">
-          <h2 class="pin-headline">Marcação precisa de cada ferimento.</h2>
-          <p class="pin-caption">O operador marca o ponto exato da lesão (PAF de entrada e saída, arma branca, selo oclusivo ou valvulado, descompressão) direto no diagrama do corpo.</p>
-        </div>
-        <div class="pin-panel">
-          <h2 class="pin-headline">Protocolo M.A.R.C.H., passo a passo.</h2>
-          <p class="pin-caption">O sistema guia a sequência completa do TCCC, do registro do operador ao histórico M.I.S.T., sem deixar nenhuma etapa passar despercebida.</p>
-        </div>
+  </div>
+
+  <div class="stack-card">
+    <div class="wrap stack-inner">
+      <div class="stack-text">
+        <h2 class="section-headline">Sinais vitais em tempo real.</h2>
+        <p>TQs, SpO2, GCS e status pulmonar sempre visíveis na tela principal, atualizados conforme o atendimento evolui em campo.</p>
       </div>
-      <div class="pin-visual">
-        <img class="pin-phone pin-phone-1" src="images/app-screen-back.png" alt="Tela do Sistema TC³ com diagrama corporal e sinais vitais">
-        <img class="pin-phone pin-phone-2" src="images/app-screen-torso.png" alt="Tela do Sistema TC³ com marcação de ferimentos no tórax">
-        <img class="pin-detail pin-detail-1" src="images/app-vitals-bar.png" alt="Detalhe da barra de sinais vitais">
-        <img class="pin-detail pin-detail-2" src="images/app-operator-card.png" alt="Cartão de identificação do operador">
+      <div class="stack-visual">
+        <img src="images/app-screen-back.png" alt="Tela do Sistema TC³ com diagrama corporal e sinais vitais">
+        <img class="stack-detail" src="images/app-vitals-bar.png" alt="Detalhe da barra de sinais vitais">
       </div>
     </div>
-    <div class="pin-dots">
-      <span class="pin-dot"></span>
-      <span class="pin-dot"></span>
-      <span class="pin-dot"></span>
+  </div>
+
+  <div class="stack-card">
+    <div class="wrap stack-inner">
+      <div class="stack-text">
+        <h2 class="section-headline">Marcação precisa de cada ferimento.</h2>
+        <p>O operador marca o ponto exato da lesão (PAF de entrada e saída, arma branca, selo oclusivo ou valvulado, descompressão) direto no diagrama do corpo.</p>
+      </div>
+      <div class="stack-visual">
+        <img src="images/app-screen-torso.png" alt="Tela do Sistema TC³ com marcação de ferimentos no tórax">
+      </div>
+    </div>
+  </div>
+
+  <div class="stack-card">
+    <div class="wrap stack-inner">
+      <div class="stack-text">
+        <h2 class="section-headline">Protocolo M.A.R.C.H., passo a passo.</h2>
+        <p>O sistema guia a sequência completa do TCCC, do registro do operador ao histórico M.I.S.T., sem deixar nenhuma etapa passar despercebida.</p>
+      </div>
+      <div class="stack-visual">
+        <img class="stack-wide" src="images/app-operator-card.png" alt="Cartão de identificação do operador responsável pelo atendimento">
+      </div>
     </div>
   </div>
 </section>
@@ -910,7 +934,7 @@
           <div class="vanguarda-module">
             <span class="error-num">01</span>
             <h4>Análise de Risco</h4>
-            <p>Assistente de 6 passos, da identificação do documento à assinatura digital, com marcação tática no mapa e classificação objetiva de risco e complexidade (SIOT).</p>
+            <p>Assistente de 6 passos, da identificação do documento à assinatura digital, com marcação tática no mapa e classificação objetiva de risco e complexidade.</p>
           </div>
           <div class="vanguarda-module">
             <span class="error-num">02</span>
@@ -1023,15 +1047,15 @@
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Fale com a gente</span>
-      <h2 class="section-headline">Pronto para levar o Sistema TC³ para sua operação?</h2>
-      <p>Escolha o caminho mais rápido para você: fale agora mesmo com um de nossos atendentes no WhatsApp ou preencha o formulário ao lado para solicitar uma demonstração completa do sistema.</p>
+      <h2 class="section-headline">Pronto para levar a tecnologia da OpsTech para sua operação?</h2>
+      <p>Escolha o caminho mais rápido para você: fale agora mesmo com um de nossos atendentes no WhatsApp ou preencha o formulário ao lado para solicitar uma demonstração do Sistema TC³, do Sistema Vanguarda, ou dos dois.</p>
     </div>
     <div class="contact-layout">
       <div class="contact-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
         <h3>Fale agora mesmo</h3>
-        <p>Tire dúvidas, peça uma demonstração ou entenda como o Sistema TC³ se encaixa na sua unidade, direto com um de nossos atendentes.</p>
-        <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Sistema%20TC%C2%B3" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:auto; align-self:flex-start;">
+        <p>Tire dúvidas, peça uma demonstração ou entenda como o Sistema TC³ e o Sistema Vanguarda se encaixam na sua unidade, direto com um de nossos atendentes.</p>
+        <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20os%20sistemas%20da%20OpsTech" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:auto; align-self:flex-start;">
           Chamar no WhatsApp
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
@@ -1056,6 +1080,16 @@
             <div class="field">
               <label for="telefone">Telefone</label>
               <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="interesse">Tenho interesse em</label>
+              <select id="interesse" name="interesse">
+                <option value="Sistema TC³">Sistema TC³</option>
+                <option value="Sistema Vanguarda">Sistema Vanguarda</option>
+                <option value="Os dois sistemas" selected>Os dois sistemas</option>
+              </select>
             </div>
           </div>
           <div class="form-row">
@@ -1145,11 +1179,11 @@
 
   /* ===== INFO MODAL (M.A.R.C.H. + telas do Sistema Vanguarda) ===== */
   const infoContent = {
-    M: { letter: 'M', emoji: '🩸', title: 'Hemorragia Massiva', text: 'A primeira prioridade do protocolo TCCC. Antes de qualquer outra ação, o operador identifica e controla sangramentos que ameaçam a vida, com torniquete em membros ou compressão direta em ferimentos juncionais. O Sistema TC³ registra o horário e o tipo de intervenção em segundos, sem tirar o foco do atendimento.' },
+    M: { letter: 'M', emoji: '🩸', title: 'Hemorragia Massiva', text: 'A primeira prioridade do protocolo TCCC. Antes de qualquer outra ação, o operador identifica e controla sangramentos que ameaçam a vida, com torniquete em membros ou compressão direta em ferimentos. O Sistema TC³ registra o horário e o tipo de intervenção em segundos, sem tirar o foco do atendimento.' },
     A: { letter: 'A', emoji: '🫁', title: 'Vias Aéreas', text: 'Com a hemorragia sob controle, o operador avalia se o paciente consegue respirar livremente. Isso inclui reposicionamento, manobras manuais ou o uso de dispositivos de via aérea quando necessário, sempre registrado no fluxo do app.' },
     R: { letter: 'R', emoji: '🌬️', title: 'Respiração', text: 'Verificação da respiração e identificação de lesões torácicas graves, como pneumotórax. O Sistema TC³ guia o registro de selos torácicos (oclusivo ou valvulado) e descompressões, direto no diagrama do corpo.' },
-    C: { letter: 'C', emoji: '❤️', title: 'Circulação', text: 'Avaliação da circulação sanguínea como um todo: pulso, sinais de choque e sangramentos que não foram identificados na etapa de hemorragia massiva. Quando necessário, o app orienta o registro de reposição volêmica.' },
-    H: { letter: 'H', emoji: '🌡️', title: 'Hipotermia / Cabeça', text: 'Prevenção de hipotermia, mantendo o paciente aquecido, e uma avaliação neurológica básica: nível de consciência e sinais de trauma craniano. Pequenos detalhes que mudam o desfecho do atendimento.' },
+    C: { letter: 'C', emoji: '❤️', title: 'Circulação', text: 'Avaliação da circulação sanguínea como um todo: pulso, sinais de choque e sangramentos que não foram identificados na etapa de hemorragia massiva. Quando necessário, o app orienta o registro de reposição volêmica. Essa etapa também reúne um checklist de conferência de tudo que já foi feito nos passos M, A e R, garantindo que nenhuma etapa anterior ficou incompleta.' },
+    H: { letter: 'H', emoji: '🌡️', title: 'Hipotermia / Cabeça', text: 'Prevenção de hipotermia, mantendo o paciente aquecido, e uma avaliação neurológica básica: nível de consciência e sinais de trauma craniano e lesões cerebrais. Pequenos detalhes que mudam o desfecho do atendimento.' },
     P: { letter: 'P', emoji: '📋', title: 'Procedimentos', text: 'Etapa final do fluxo: registro de medicações administradas, histórico M.I.S.T. e preparação para a evacuação. É o que transforma o atendimento em um documento formal, pronto para assinatura digital.' },
     'vg-home': { emoji: '🏠', title: 'Tela inicial', text: 'Acesso direto aos dois módulos principais, Análise de Risco e Planejamento, além do Painel de Controle de Arquivos, que organiza tudo o que já foi produzido em Relatórios, Planejamentos e Rascunhos.' },
     'vg-map': { emoji: '🗺️', title: 'Marcação tática no mapa', text: 'O operador marca diretamente no mapa os pontos de interesse tático (barricadas, rotas de fuga, QG/alvo, pontos de observação), e o app calcula automaticamente o trajeto e o tempo de deslocamento até o local.' },
@@ -1265,6 +1299,14 @@
         { cx: () => w * 0.55, cy: () => h * 1.1,  radius: 340, sides: 8, rot: 0.3,  speed: 0.00025, alpha: 0.05 }
       ];
 
+      let targetPX = 0, targetPY = 0, curPX = 0, curPY = 0;
+      if (!isMobile) {
+        window.addEventListener('mousemove', (e) => {
+          targetPX = (e.clientX / window.innerWidth - 0.5);
+          targetPY = (e.clientY / window.innerHeight - 0.5);
+        });
+      }
+
       function drawPolys(){
         for (const poly of polys){
           poly.rot += poly.speed;
@@ -1284,6 +1326,12 @@
 
       function step(){
         ctx.clearRect(0, 0, w, h);
+
+        curPX += (targetPX - curPX) * 0.04;
+        curPY += (targetPY - curPY) * 0.04;
+        ctx.save();
+        ctx.translate(curPX * 24, curPY * 16);
+
         drawPolys();
 
         for (const p of particles){
@@ -1315,6 +1363,7 @@
           ctx.fill();
         }
 
+        ctx.restore();
         requestAnimationFrame(step);
       }
       step();
@@ -1534,63 +1583,23 @@
     });
   }
 
-  /* ===== PIN + SCRUB (Técnica 3) — Por dentro do Sistema TC³ ===== */
-  function initPinShowcase(){
-    const section = document.querySelector('.section-pinned');
-    if (!section || isMobile || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-
-    const panels = section.querySelectorAll('.pin-panel');
-    const phones = section.querySelectorAll('.pin-phone');
-    const details = section.querySelectorAll('.pin-detail');
-    const headWrap = section.querySelector('.pin-text-headlines');
-    const visual = section.querySelector('.pin-visual');
-
-    if (panels.length < 3 || phones.length < 2) return;
-
-    // measure tallest panel before switching to absolute, so the column keeps its height
-    let maxPanelHeight = 0;
-    panels.forEach(p => { maxPanelHeight = Math.max(maxPanelHeight, p.offsetHeight); });
-
-    gsap.set(headWrap, { position: 'relative', minHeight: maxPanelHeight + 'px' });
-    gsap.set(panels, { position: 'absolute', top: 0, left: 0, right: 0, margin: 0 });
-    gsap.set(panels[1], { opacity: 0 });
-    gsap.set(panels[2], { opacity: 0 });
-
-    gsap.set(visual, { position: 'relative' });
-    gsap.set([...phones, ...details], { position: 'absolute', top: '50%', left: '50%', xPercent: -50, yPercent: -50, margin: 0 });
-    gsap.set(phones[1], { opacity: 0 });
-    gsap.set(details, { opacity: 0 });
-    gsap.set(details[0], { top: '82%' });
-    gsap.set(details[1], { top: '82%' });
-
-    const dots = section.querySelectorAll('.pin-dot');
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: '+=1300',
-        pin: true,
-        scrub: 0.4,
-        anticipatePin: 1
+  /* ===== SHOWCASE: cartas empilhando (Técnica 1, sem pin) ===== */
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    document.querySelectorAll('.stack-card').forEach(card => {
+      const text = card.querySelectorAll('.stack-text p');
+      const visual = card.querySelector('.stack-visual');
+      gsap.from(text, {
+        opacity: 0, y: 24, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: card, start: 'top 70%' }
+      });
+      if (visual) {
+        gsap.from(visual, {
+          opacity: 0, y: 40, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 75%' }
+        });
       }
     });
-
-    tl.to(panels[0], { opacity: 0, duration: 0.3 })
-      .to(panels[1], { opacity: 1, duration: 0.3 }, '<')
-      .to(phones[0], { opacity: 0, duration: 0.4 }, '<')
-      .to(phones[1], { opacity: 1, duration: 0.4 }, '<')
-      .to(details[0], { opacity: 1, duration: 0.3 }, '<+0.1')
-      .to(dots[0], { opacity: 0.35 }, '<')
-      .to(dots[1], { opacity: 1 }, '<')
-      .to(panels[1], { opacity: 0, duration: 0.3 }, '+=0.15')
-      .to(panels[2], { opacity: 1, duration: 0.3 }, '<')
-      .to(details[0], { opacity: 0, duration: 0.3 }, '<')
-      .to(details[1], { opacity: 1, duration: 0.3 }, '<+0.1')
-      .to(dots[1], { opacity: 0.35 }, '<')
-      .to(dots[2], { opacity: 1 }, '<');
   }
-  initPinShowcase();
 
   /* ===== FORM (no backend — swap action for real endpoint on hosting) ===== */
   const form = document.getElementById('contactForm');
