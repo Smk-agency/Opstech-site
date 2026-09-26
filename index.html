@@ -1497,19 +1497,19 @@
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     document.querySelectorAll('.error-grid').forEach(grid => {
       gsap.from(grid.querySelectorAll('.error-card'), {
-        opacity: 0, y: 40, duration: 0.8, stagger: 0.12, ease: 'power3.out',
+        opacity: 0, y: 18, duration: 0.6, stagger: 0.06, ease: 'power3.out',
         scrollTrigger: { trigger: grid, start: 'top 85%' }
       });
     });
     document.querySelectorAll('.march-row').forEach(row => {
       gsap.from(row.querySelectorAll('.march-chip'), {
-        opacity: 0, y: 24, duration: 0.6, stagger: 0.06, ease: 'power3.out',
+        opacity: 0, y: 16, duration: 0.55, stagger: 0.05, ease: 'power3.out',
         scrollTrigger: { trigger: row, start: 'top 90%' }
       });
     });
     document.querySelectorAll('.feature-row').forEach(row => {
       gsap.from(row.querySelectorAll('.feature-chip'), {
-        opacity: 0, y: 24, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        opacity: 0, y: 16, duration: 0.55, stagger: 0.06, ease: 'power3.out',
         scrollTrigger: { trigger: row, start: 'top 90%' }
       });
     });
@@ -1522,7 +1522,7 @@
 
     document.querySelectorAll('.ecosystem-row').forEach(row => {
       gsap.from(row.querySelectorAll('.ecosystem-card'), {
-        opacity: 0, y: 36, duration: 0.7, stagger: 0.15, ease: 'power3.out',
+        opacity: 0, y: 18, duration: 0.6, stagger: 0.06, ease: 'power3.out',
         scrollTrigger: { trigger: row, start: 'top 88%' }
       });
     });
@@ -1557,13 +1557,13 @@
     });
     document.querySelectorAll('.vanguarda-gallery').forEach(gallery => {
       gsap.from(gallery.querySelectorAll('img'), {
-        opacity: 0, y: 36, scale: 0.96, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+        opacity: 0, y: 18, scale: 0.98, duration: 0.6, stagger: 0.06, ease: 'power3.out',
         scrollTrigger: { trigger: gallery, start: 'top 85%' }
       });
     });
     document.querySelectorAll('.rollout-row').forEach(row => {
       gsap.from(row.querySelectorAll('.rollout-step'), {
-        opacity: 0, y: 28, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        opacity: 0, y: 16, duration: 0.55, stagger: 0.06, ease: 'power3.out',
         scrollTrigger: { trigger: row, start: 'top 88%' }
       });
     });
