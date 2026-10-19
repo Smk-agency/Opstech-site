@@ -228,6 +228,67 @@
   .btn svg{ width:16px; height:16px; transition:transform 0.3s; }
   .btn:hover svg{ transform:translateX(3px); }
 
+  /* ===== EFEITOS: raios de luz, gradiente animado, marca-texto ===== */
+  section > .wrap{ position:relative; z-index:1; }
+
+  .rays{
+    --ax:50%;
+    position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+    -webkit-mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,0.65) 42%, transparent 88%);
+    mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,0.65) 42%, transparent 88%);
+  }
+  .rays::before, .rays::after{
+    content:''; position:absolute;
+    left:var(--ax); top:-60%;
+    width:220%; height:220%; margin-left:-110%;
+    transform-origin:50% 28%;
+    will-change:transform;
+  }
+  .rays::before{
+    background:repeating-conic-gradient(from 0deg at 50% 28%, transparent 0deg, rgba(231,210,139,0.16) 2.4deg, transparent 5deg, transparent 13deg);
+    animation:raysSway 16s ease-in-out infinite alternate;
+  }
+  .rays::after{
+    background:repeating-conic-gradient(from 6deg at 50% 28%, transparent 0deg, rgba(255,248,230,0.11) 1.6deg, transparent 3.4deg, transparent 19deg);
+    animation:raysSway 24s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes raysSway{ from{ transform:rotate(-6deg); } to{ transform:rotate(6deg); } }
+  .rays-hero{ --ax:68%; }
+  .rays-soft::before{ opacity:0.7; }
+  .rays-soft::after{ opacity:0.7; }
+
+  .glow-field{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+  }
+  .glow-field span{
+    position:absolute; width:58vmax; height:58vmax; border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, var(--g) 0%, transparent 62%);
+    will-change:transform;
+  }
+  .glow-field span:nth-child(1){ --g:rgba(125,120,62,0.62); top:-22%; left:-18%; animation:blobA 20s ease-in-out infinite alternate; }
+  .glow-field span:nth-child(2){ --g:rgba(231,210,139,0.24); top:18%; right:-24%; animation:blobB 24s ease-in-out infinite alternate; }
+  .glow-field span:nth-child(3){ --g:rgba(70,100,58,0.55); bottom:-34%; left:22%; animation:blobC 28s ease-in-out infinite alternate; }
+  @keyframes blobA{ to{ transform:translate(22%,14%) scale(1.18); } }
+  @keyframes blobB{ to{ transform:translate(-20%,16%) scale(0.9); } }
+  @keyframes blobC{ to{ transform:translate(14%,-18%) scale(1.12); } }
+
+  .rays.is-off::before, .rays.is-off::after, .glow-field.is-off span{ animation-play-state:paused; }
+  @media (prefers-reduced-motion:reduce){
+    .rays::before, .rays::after, .glow-field span{ animation:none; }
+  }
+
+  .hl{
+    background-image:linear-gradient(100deg, rgba(110,106,59,0.62), rgba(110,106,59,0.30));
+    background-repeat:no-repeat; background-position:0 92%; background-size:0% 64%;
+    -webkit-box-decoration-break:clone; box-decoration-break:clone;
+    padding:0 0.14em; margin:0 -0.14em;
+    transition:background-size 0.9s cubic-bezier(0.22,1,0.36,1);
+    transition-delay:var(--hl-delay, 0s);
+  }
+  .hl.from-right{ background-position:100% 92%; }
+  .hl.in{ background-size:100% 64%; }
+  @media (prefers-reduced-motion:reduce){ .hl{ background-size:100% 64%; transition:none; } }
+
   /* ===== HERO ===== */
   .hero{
     min-height:100vh;
@@ -474,18 +535,40 @@
     margin-top:56px; margin-bottom:72px;
   }
   @media (min-width:700px){ .ecosystem-row{ grid-template-columns:1fr 1fr; gap:24px; } }
-  .ecosystem-card{
-    border:1px solid var(--hairline); border-radius:10px;
-    padding:32px; background:var(--surface);
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    transition:border-color 0.3s, transform 0.3s;
+  .ecosystem-card{ perspective:1300px; }
+  .book{
+    position:relative; height:100%;
+    padding:32px 32px 32px 46px;
+    background:linear-gradient(135deg, rgba(38,36,28,0.94), rgba(22,21,16,0.94));
+    border:1px solid var(--hairline); border-radius:4px 12px 12px 4px;
+    transform-origin:left center;
+    transform:rotateY(-15deg) rotateX(3deg);
+    box-shadow:-14px 18px 34px rgba(0,0,0,0.45);
+    transition:transform 0.8s cubic-bezier(0.22,1,0.36,1), box-shadow 0.8s cubic-bezier(0.22,1,0.36,1), border-color 0.3s;
+    will-change:transform;
   }
-  .ecosystem-card:hover{ border-color:var(--accent-2); transform:translateY(-4px); }
+  .book::before{
+    content:''; position:absolute; top:0; bottom:0; left:0; width:18px;
+    background:linear-gradient(90deg, rgba(0,0,0,0.6), rgba(255,255,255,0.06) 55%, transparent);
+    border-radius:4px 0 0 4px; pointer-events:none;
+  }
+  .book::after{
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:linear-gradient(115deg, rgba(255,255,255,0.08), transparent 42%);
+  }
+  .ecosystem-card:hover .book{
+    transform:rotateY(-3deg) rotateX(0deg) translateY(-4px);
+    box-shadow:-6px 24px 44px rgba(0,0,0,0.5);
+    border-color:var(--accent-2);
+  }
+  .book-icon{ display:block; width:22px; height:22px; margin-bottom:14px; color:var(--accent); }
   .ecosystem-card h3{ margin:10px 0 10px; font-size:clamp(1.25rem,2vw,1.6rem); }
   .ecosystem-card p{ font-size:0.92rem; }
-  .ecosystem-card-new{ border-color:var(--accent-2); }
+  .ecosystem-card-new .book{ border-color:var(--accent-2); }
   .ecosystem-card-new .cap{ color:var(--accent); }
-  .ecosystem-card-new:hover{ border-color:var(--accent); }
+  .ecosystem-card-new:hover .book{ border-color:var(--accent); }
+  @media (max-width:699px){ .book{ transform:rotateY(-7deg) rotateX(2deg); } }
+  @media (prefers-reduced-motion:reduce){ .book, .ecosystem-card:hover .book{ transition:none; } }
 
   .vanguarda-product-header{
     display:flex; align-items:center; gap:20px;
@@ -737,13 +820,14 @@
 
 <!-- HERO -->
 <header class="hero" id="top">
+  <div class="rays rays-hero" aria-hidden="true"></div>
   <canvas id="hero-canvas"></canvas>
   <div class="hero-radar-fallback" id="radarFallback"></div>
   <div class="wrap">
     <div class="hero-content">
       <span class="eyebrow">OpsTech Brasil · Tecnologia Tática</span>
-      <h1 class="hero-headline">Informação certa. No momento certo.</h1>
-      <p>O Sistema TC³ digitaliza o protocolo TCCC e guia o operador em tempo real durante o Atendimento Pré-Hospitalar Tático, para que nenhuma decisão crítica dependa de memória, papel ou improviso.</p>
+      <h1 class="hero-headline">Informação certa. No <span class="hl" data-delay="1.6">momento certo.</span></h1>
+      <p>O Sistema TC³ digitaliza o protocolo TCCC e guia o operador em tempo real durante o Atendimento Pré-Hospitalar Tático, para que nenhuma decisão crítica dependa de <span class="hl" data-delay="1.3">memória, papel ou improviso</span>.</p>
       <div class="hero-ctas">
         <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Sistema%20TC%C2%B3" target="_blank" rel="noopener" class="btn btn-primary">
           Falar com um atendente
@@ -767,10 +851,10 @@
     <div class="section-head">
       <span class="eyebrow">Em operações críticas</span>
       <h2 class="section-headline">Uma decisão pode fazer a diferença</h2>
-      <p>Em uma ocorrência tática, cada escolha precisa ser rápida, precisa e baseada em informações confiáveis. Quando o protocolo não é seguido à risca ou um dado se perde no meio do atendimento, o custo não é apenas operacional: é humano. Quanto vale uma informação perdida no meio de uma missão? No APH Tático, a resposta pode ser a diferença entre estabilizar o paciente a tempo ou não.</p>
+      <p>Em uma ocorrência tática, cada escolha precisa ser rápida, precisa e baseada em informações confiáveis. Quando o protocolo não é seguido à risca ou um dado se perde no meio do atendimento, o custo não é apenas operacional: <span class="hl" data-delay="0.2">é humano</span>. Quanto vale uma informação perdida no meio de uma missão? No APH Tático, a resposta pode ser a diferença entre estabilizar o paciente a tempo ou não.</p>
     </div>
     <div class="quote-block">
-      <p class="quote">O tempo é o recurso mais valioso em missão.</p>
+      <p class="quote">O tempo é o recurso <span class="hl" data-delay="0.25">mais valioso</span> em missão.</p>
     </div>
   </div>
 </section>
@@ -802,7 +886,7 @@
         <p>Cada etapa do M.A.R.C.H. importa, na ordem certa. Pular uma etapa por pressa ou confusão pode custar caro no desfecho do atendimento.</p>
       </div>
     </div>
-    <div class="closer-line">No APH Tático, <span>pequenos erros podem gerar grandes consequências.</span></div>
+    <div class="closer-line">No APH Tático, <span class="hl" data-delay="0.3" data-from="right">pequenos erros podem gerar grandes consequências.</span></div>
   </div>
 </section>
 
@@ -898,23 +982,30 @@
 
 <!-- ECOSSISTEMA OPSTECH / SISTEMA VANGUARDA -->
 <section class="bg-elevated" id="vanguarda">
+  <div class="glow-field" aria-hidden="true"><span></span><span></span><span></span></div>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Ecossistema OpsTech</span>
       <h2 class="section-headline">O ciclo completo de uma operação de risco</h2>
-      <p>O Sistema TC³ cuida do atendimento em campo. O novo Sistema Vanguarda cuida da preparação: análise de risco e planejamento operacional, antes da missão começar. Juntos, os dois sistemas acompanham a operação do início ao fim.</p>
+      <p>O Sistema TC³ cuida do atendimento em campo. O novo Sistema Vanguarda cuida da preparação: análise de risco e planejamento operacional, antes da missão começar. Juntos, os dois sistemas acompanham a operação <span class="hl" data-delay="0.3">do início ao fim</span>.</p>
     </div>
 
     <div class="ecosystem-row">
       <div class="ecosystem-card">
-        <span class="cap">Em campo</span>
-        <h3>Sistema TC³</h3>
-        <p>Atendimento pré-hospitalar tático em tempo real, guiado pelo protocolo TCCC durante a missão.</p>
+        <div class="book">
+          <svg class="book-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span class="cap">Em campo</span>
+          <h3>Sistema TC³</h3>
+          <p>Atendimento pré-hospitalar tático em tempo real, guiado pelo protocolo TCCC durante a missão.</p>
+        </div>
       </div>
       <div class="ecosystem-card ecosystem-card-new">
-        <span class="cap">Novo · Em lançamento</span>
-        <h3>Sistema Vanguarda</h3>
-        <p>Análise de risco e planejamento operacional digital, concluídos antes da operação começar.</p>
+        <div class="book">
+          <svg class="book-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M22 12h-4M6 12H2M12 6V2M12 22v-4"/></svg>
+          <span class="cap">Novo · Em lançamento</span>
+          <h3>Sistema Vanguarda</h3>
+          <p>Análise de risco e planejamento operacional digital, concluídos antes da operação começar.</p>
+        </div>
       </div>
     </div>
 
@@ -1016,7 +1107,7 @@
       <div>
         <span class="eyebrow">Quem somos</span>
         <h2 class="section-headline">OpsTech Brasil</h2>
-        <p>Somos uma empresa de tecnologia focada em criar aplicativos para operações críticas. Unimos conhecimento tático e desenvolvimento de software para transformar protocolos consagrados, como o TCCC, em ferramentas digitais confiáveis, rápidas e fáceis de usar sob pressão. Cada linha de código que escrevemos parte da mesma pergunta: isso vai funcionar no pior momento possível? Se a resposta for sim, seguimos em frente.</p>
+        <p>Somos uma empresa de tecnologia focada em criar aplicativos para operações críticas. Unimos conhecimento tático e desenvolvimento de software para transformar protocolos consagrados, como o TCCC, em ferramentas digitais confiáveis, rápidas e fáceis de usar sob pressão. Cada linha de código que escrevemos parte da mesma pergunta: <span class="hl" data-delay="0.2">isso vai funcionar no pior momento possível?</span> Se a resposta for sim, seguimos em frente.</p>
         <div class="feature-row">
           <div class="feature-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
@@ -1044,6 +1135,7 @@
 
 <!-- CONTATO -->
 <section id="contato">
+  <div class="rays rays-soft" aria-hidden="true"></div>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Fale com a gente</span>
@@ -1260,6 +1352,31 @@
       }
     } catch(e) {}
   }
+
+  /* ===== EFEITOS: marca-texto animado e pausa de animações fora da tela ===== */
+  (function initFx(){
+    const hls = document.querySelectorAll('.hl');
+    hls.forEach(el => {
+      const d = el.getAttribute('data-delay');
+      if (d) el.style.setProperty('--hl-delay', d + 's');
+      if (el.getAttribute('data-from') === 'right') el.classList.add('from-right');
+    });
+    if ('IntersectionObserver' in window) {
+      const hlObserver = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (en.isIntersecting) { en.target.classList.add('in'); hlObserver.unobserve(en.target); }
+        });
+      }, { threshold: 0.4 });
+      hls.forEach(el => hlObserver.observe(el));
+
+      const pauseObserver = new IntersectionObserver((entries) => {
+        entries.forEach(en => en.target.classList.toggle('is-off', !en.isIntersecting));
+      }, { threshold: 0 });
+      document.querySelectorAll('.rays, .glow-field').forEach(el => pauseObserver.observe(el));
+    } else {
+      hls.forEach(el => el.classList.add('in'));
+    }
+  })();
 
   /* ===== AMBIENT PARTICLE FIELD (runs behind the whole site) ===== */
   function initAmbientField(){
