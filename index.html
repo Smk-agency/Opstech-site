@@ -291,19 +291,39 @@
 
   /* ===== HERO ===== */
   .hero{
-    min-height:100vh;
-    display:flex; align-items:center;
     position:relative;
-    padding-top:140px;
+    height:300vh;
+  }
+  .hero-stage{
+    position:sticky; top:0;
+    height:100vh; height:100svh; min-height:560px;
+    display:flex; align-items:center;
+    padding-top:100px;
     overflow:hidden;
   }
   #hero-canvas{
     position:absolute; inset:0;
     width:100%; height:100%;
     z-index:0;
-    opacity:0.9;
-    mask-image:linear-gradient(90deg, transparent 0%, transparent 8%, black 42%, black 100%);
-    -webkit-mask-image:linear-gradient(90deg, transparent 0%, transparent 8%, black 42%, black 100%);
+  }
+  .hero .wrap.hero-pane-2-wrap{
+    position:absolute; left:0; right:0; top:0; bottom:0;
+    width:100%; margin:0 auto;
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-top:60px;
+    pointer-events:none;
+  }
+  .hero-pane-2{ max-width:500px; opacity:0; visibility:hidden; will-change:transform, opacity; }
+  .hero-pane-2 .hero-ctas{ pointer-events:auto; }
+  .hero-headline2{
+    font-size:clamp(2rem,4.2vw,3.4rem); margin-bottom:20px;
+    text-shadow: 0 0 44px rgba(242,239,230,0.45), 0 0 96px rgba(231,210,139,0.28);
+  }
+  .hero-content{ will-change:transform, opacity; }
+  @media (max-width:899px){
+    .hero .wrap.hero-pane-2-wrap{ align-items:flex-end; justify-content:flex-start; padding-bottom:92px; padding-top:0; }
+    .hero-pane-2{ max-width:none; }
+    .hero .scroll-cue{ display:none; }
   }
   .hero-radar-fallback{
     position:absolute; top:50%; right:-10%; transform:translateY(-50%);
@@ -820,11 +840,12 @@
 
 <!-- HERO -->
 <header class="hero" id="top">
+ <div class="hero-stage">
   <div class="rays rays-hero" aria-hidden="true"></div>
   <canvas id="hero-canvas"></canvas>
   <div class="hero-radar-fallback" id="radarFallback"></div>
   <div class="wrap">
-    <div class="hero-content">
+    <div class="hero-content" id="heroPane1">
       <span class="eyebrow">OpsTech Brasil · Tecnologia Tática</span>
       <h1 class="hero-headline">Informação certa. No <span class="hl" data-delay="1.6">momento certo.</span></h1>
       <p>O Sistema TC³ digitaliza o protocolo TCCC e guia o operador em tempo real durante o Atendimento Pré-Hospitalar Tático, para que nenhuma decisão crítica dependa de <span class="hl" data-delay="1.3">memória, papel ou improviso</span>.</p>
@@ -839,10 +860,21 @@
       </div>
     </div>
   </div>
+  <div class="wrap hero-pane-2-wrap">
+    <div class="hero-pane-2" id="heroPane2">
+      <span class="eyebrow">Do planejamento ao campo</span>
+      <h2 class="hero-headline2">Decisões rápidas. Com confiança.</h2>
+      <p>Do Sistema Vanguarda ao Sistema TC³, cada etapa da operação fica registrada, padronizada e pronta para assinatura digital.</p>
+      <div class="hero-ctas">
+        <a href="#vanguarda" class="btn btn-ghost">Conhecer o Vanguarda</a>
+      </div>
+    </div>
+  </div>
   <div class="scroll-cue">
     <span>Role para descobrir</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m6 9 6 6 6-6"/></svg>
   </div>
+ </div>
 </header>
 
 <!-- PROBLEMA -->
@@ -1488,21 +1520,72 @@
   }
   initAmbientField();
 
-  /* ===== HERO THREE.JS SCENE ===== */
+  /* ===== HERO: globo de partículas dirigido pelo scroll ===== */
   function initHeroScene(){
     const canvas = document.getElementById('hero-canvas');
-    if (!canvas) return;
-    if (typeof THREE === 'undefined') {
+    const heroEl = document.getElementById('top');
+    if (!canvas || !heroEl) return;
+    const pane1 = document.getElementById('heroPane1');
+    const pane2 = document.getElementById('heroPane2');
+    const cue = document.querySelector('.scroll-cue');
+    const raysEl = document.querySelector('.rays-hero');
+
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const ease = (t) => t * t * (3 - 2 * t);
+    const sm = (a, b, x) => ease(clamp((x - a) / (b - a), 0, 1));
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    function getProgress(){
+      const total = heroEl.offsetHeight - window.innerHeight;
+      if (total <= 0) return 0;
+      return clamp(-heroEl.getBoundingClientRect().top / total, 0, 1);
+    }
+
+    function updateTexts(p){
+      if (pane1) {
+        const o = 1 - sm(0.06, 0.26, p);
+        pane1.style.opacity = o.toFixed(3);
+        pane1.style.transform = 'translate3d(0,' + (-lerp(0, 90, sm(0.04, 0.30, p))).toFixed(1) + 'px,0)';
+        pane1.style.pointerEvents = o < 0.2 ? 'none' : '';
+        pane1.style.visibility = o < 0.01 ? 'hidden' : 'visible';
+      }
+      if (pane2) {
+        const o = sm(0.50, 0.62, p);
+        const y = lerp(44, 0, sm(0.50, 0.64, p));
+        pane2.style.opacity = o.toFixed(3);
+        pane2.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+        pane2.style.visibility = o < 0.01 ? 'hidden' : 'visible';
+      }
+      if (cue) cue.style.opacity = (1 - sm(0, 0.05, p)).toFixed(3);
+      if (raysEl) raysEl.style.opacity = (1 - 0.65 * sm(0.4, 0.95, p)).toFixed(3);
+    }
+
+    function textOnlyFallback(){
       const fb = document.getElementById('radarFallback');
       if (fb) fb.style.display = 'block';
-      return;
+      let ps = 0;
+      (function loop(){
+        ps += (getProgress() - ps) * 0.12;
+        updateTexts(ps);
+        requestAnimationFrame(loop);
+      })();
     }
+
+    if (typeof THREE === 'undefined') { textOnlyFallback(); return; }
+
     try {
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.3 : 2));
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / (canvas.clientHeight || 1), 0.1, 100);
-      camera.position.set(0.5, 0, 9.5);
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+      camera.position.set(0, 0, 9.5);
+
+      const uniformsShared = {
+        uTime: { value: 0 },
+        uPR: { value: 1 },
+        uViewH: { value: 800 }
+      };
+      let halfW = 6, narrow = false, sEnd = 1.5, xEnd = -2.5;
 
       function resize(){
         const w = canvas.clientWidth || window.innerWidth;
@@ -1510,37 +1593,189 @@
         renderer.setSize(w, h, false);
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
+        halfW = Math.tan(25 * Math.PI / 180) * 9.5 * camera.aspect;
+        narrow = camera.aspect < 0.95;
+        uniformsShared.uPR.value = renderer.getPixelRatio();
+        uniformsShared.uViewH.value = h;
+        if (!narrow && pane2) {
+          const textLeft = pane2.getBoundingClientRect().left / window.innerWidth;
+          const worldTextLeft = (textLeft * 2 - 1) * halfW;
+          const spaceLeft = -halfW + 0.35;
+          const spaceRight = worldTextLeft - 0.5;
+          sEnd = clamp((spaceRight - spaceLeft) / (2 * 2.1), 0.85, 1.7);
+          xEnd = spaceLeft + 2.1 * sEnd;
+        }
       }
       resize();
       window.addEventListener('resize', resize);
 
-      const detail = isMobile ? 1 : 2;
-      const geo = new THREE.IcosahedronGeometry(2.1, detail);
-      const wireMat = new THREE.MeshBasicMaterial({ color: 0xE7D28B, wireframe: true, transparent: true, opacity: 0.22 });
-      const wireMesh = new THREE.Mesh(geo, wireMat);
-      wireMesh.position.x = 3.4;
-      scene.add(wireMesh);
+      const vert = [
+        'attribute vec4 aRand;',
+        'attribute vec3 aColor;',
+        'attribute float aSize;',
+        'uniform float uTime;',
+        'uniform float uPR;',
+        'uniform float uViewH;',
+        'uniform float uDisint;',
+        'uniform float uObjScale;',
+        'uniform float uDim;',
+        'varying vec3 vColor;',
+        'varying float vAlpha;',
+        'varying float vRot;',
+        'void main(){',
+        '  vec3 p = position;',
+        '  float tw = sin(uTime * 1.3 + aRand.x * 40.0);',
+        '  p += normalize(position) * (0.03 * sin(uTime * 0.7 + aRand.y * 20.0));',
+        '  float h = clamp(p.y / 2.5 * 0.5 + 0.5, 0.0, 1.0);',
+        '  float start = h * 0.62 + aRand.z * 0.38;',
+        '  float d = clamp((uDisint * 1.4 - start) / 0.4, 0.0, 1.0);',
+        '  p.y -= d * d * (1.4 + aRand.w * 5.5);',
+        '  p.x += d * (aRand.x - 0.5) * 2.8;',
+        '  p.z += d * (aRand.y - 0.5) * 2.8;',
+        '  vec4 mv = modelViewMatrix * vec4(p, 1.0);',
+        '  gl_Position = projectionMatrix * mv;',
+        '  float depth = smoothstep(12.5, 6.8, -mv.z);',
+        '  vAlpha = (1.0 - smoothstep(0.55, 1.0, d)) * (0.8 + 0.2 * tw) * (0.28 + 0.72 * depth) * uDim;',
+        '  float sz = aSize * uObjScale * uPR * uViewH / (0.9326 * -mv.z);',
+        '  gl_PointSize = max(2.0, sz * (1.0 - 0.45 * d) * (0.75 + 0.25 * depth));',
+        '  vColor = aColor;',
+        '  vRot = aRand.x * 6.2831 + uTime * (aRand.w - 0.5) * 0.9 + d * 6.0;',
+        '}'
+      ].join('\n');
 
-      const particleGeo = new THREE.BufferGeometry();
-      particleGeo.setAttribute('position', geo.attributes.position.clone());
-      const particleMat = new THREE.PointsMaterial({ color: 0xE7D28B, size: 0.045, transparent: true, opacity: 0.7 });
-      const particles = new THREE.Points(particleGeo, particleMat);
-      particles.position.copy(wireMesh.position);
-      scene.add(particles);
+      const frag = [
+        'precision mediump float;',
+        'uniform float uFill;',
+        'varying vec3 vColor;',
+        'varying float vAlpha;',
+        'varying float vRot;',
+        'void main(){',
+        '  vec2 uv = gl_PointCoord - 0.5;',
+        '  uv.y = -uv.y;',
+        '  float c = cos(vRot); float s = sin(vRot);',
+        '  uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);',
+        '  float r = 0.2;',
+        '  float d1 = -uv.y - r;',
+        '  float d2 = 0.8660254 * uv.x + 0.5 * uv.y - r;',
+        '  float d3 = -0.8660254 * uv.x + 0.5 * uv.y - r;',
+        '  float dist = max(max(d1, d2), d3);',
+        '  float inside = 1.0 - smoothstep(-0.015, 0.015, dist);',
+        '  float band = 1.0 - smoothstep(0.0, 0.085, -dist);',
+        '  float a = inside * (uFill * 0.38 + band * 0.9);',
+        '  if (a < 0.02) discard;',
+        '  gl_FragColor = vec4(vColor, a * vAlpha);',
+        '}'
+      ].join('\n');
+
+      function makeMaterial(fill, extra){
+        return new THREE.ShaderMaterial({
+          vertexShader: vert,
+          fragmentShader: frag,
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          uniforms: Object.assign({
+            uTime: uniformsShared.uTime,
+            uPR: uniformsShared.uPR,
+            uViewH: uniformsShared.uViewH,
+            uDisint: { value: 0 },
+            uObjScale: { value: 1 },
+            uDim: { value: 1 },
+            uFill: { value: fill }
+          }, extra || {})
+        });
+      }
+
+      const palette = [
+        { c: [0.906, 0.824, 0.545], w: 0.42 },
+        { c: [0.949, 0.937, 0.902], w: 0.22 },
+        { c: [0.788, 0.635, 0.294], w: 0.22 },
+        { c: [0.55, 0.54, 0.29], w: 0.10 },
+        { c: [1.0, 1.0, 1.0], w: 0.04 }
+      ];
+      function pickColor(){
+        let r = Math.random(), acc = 0;
+        for (const e of palette) { acc += e.w; if (r <= acc) return e.c; }
+        return palette[0].c;
+      }
+
+      function buildGeometry(count, radius, shell){
+        const pos = new Float32Array(count * 3);
+        const rnd = new Float32Array(count * 4);
+        const col = new Float32Array(count * 3);
+        const siz = new Float32Array(count);
+        for (let i = 0; i < count; i++) {
+          const u = Math.random() * 2 - 1;
+          const th = Math.random() * Math.PI * 2;
+          const rr = Math.sqrt(1 - u * u);
+          const dx = rr * Math.cos(th), dy = u, dz = rr * Math.sin(th);
+          const relief = 1 + 0.045 * Math.sin(dx * 5 + 1) * Math.cos(dy * 4) * Math.sin(dz * 5);
+          const inner = Math.random() < 0.1;
+          const rad = radius * (inner ? 0.55 + Math.random() * 0.38 : relief * (1 + (Math.random() - 0.5) * shell));
+          pos[i * 3] = dx * rad; pos[i * 3 + 1] = dy * rad; pos[i * 3 + 2] = dz * rad;
+          rnd[i * 4] = Math.random(); rnd[i * 4 + 1] = Math.random(); rnd[i * 4 + 2] = Math.random(); rnd[i * 4 + 3] = Math.random();
+          const cc = pickColor();
+          const k = 0.82 + Math.random() * 0.18;
+          col[i * 3] = cc[0] * k; col[i * 3 + 1] = cc[1] * k; col[i * 3 + 2] = cc[2] * k;
+          siz[i] = 0.055 + Math.pow(Math.random(), 2) * 0.1;
+        }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        g.setAttribute('aRand', new THREE.BufferAttribute(rnd, 4));
+        g.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+        g.setAttribute('aSize', new THREE.BufferAttribute(siz, 1));
+        return g;
+      }
+
+      const rig = new THREE.Group();
+      scene.add(rig);
+
+      const globeMat = makeMaterial(1);
+      const globe = new THREE.Points(buildGeometry(isMobile ? 3600 : 7600, 2.1, 0.1), globeMat);
+      globe.frustumCulled = false;
+      rig.add(globe);
+
+      const wireMat = new THREE.MeshBasicMaterial({ color: 0xE7D28B, wireframe: true, transparent: true, opacity: 0.16, depthWrite: false });
+      const wire = new THREE.Mesh(new THREE.IcosahedronGeometry(2.1, isMobile ? 1 : 2), wireMat);
+      rig.add(wire);
 
       const ringGeo = new THREE.RingGeometry(2.85, 2.9, 80);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x6E6A3B, side: THREE.DoubleSide, transparent: true, opacity: 0.4 });
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x6E6A3B, side: THREE.DoubleSide, transparent: true, opacity: 0.4, depthWrite: false });
       const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.copy(wireMesh.position);
       ring.rotation.x = Math.PI / 2.3;
-      scene.add(ring);
-
-      const ring2 = new THREE.Mesh(ringGeo.clone(), ringMat.clone());
+      rig.add(ring);
+      const ring2Mat = ringMat.clone();
+      ring2Mat.opacity = 0.22;
+      const ring2 = new THREE.Mesh(ringGeo.clone(), ring2Mat);
       ring2.scale.setScalar(0.7);
-      ring2.position.copy(wireMesh.position);
       ring2.rotation.x = Math.PI / 1.8;
-      ring2.material.opacity = 0.22;
-      scene.add(ring2);
+      rig.add(ring2);
+
+      const debrisCount = isMobile ? 10 : 18;
+      const dGeo = new THREE.BufferGeometry();
+      const dPos = new Float32Array(debrisCount * 3);
+      const dRnd = new Float32Array(debrisCount * 4);
+      const dCol = new Float32Array(debrisCount * 3);
+      const dSiz = new Float32Array(debrisCount);
+      for (let i = 0; i < debrisCount; i++) {
+        dPos[i * 3] = (Math.random() * 2 - 1) * 9;
+        dPos[i * 3 + 1] = (Math.random() * 2 - 1) * 4.6;
+        dPos[i * 3 + 2] = -6 + Math.random() * 8;
+        for (let k = 0; k < 4; k++) dRnd[i * 4 + k] = Math.random();
+        const cc = pickColor();
+        dCol[i * 3] = cc[0]; dCol[i * 3 + 1] = cc[1]; dCol[i * 3 + 2] = cc[2];
+        dSiz[i] = 0.16 + Math.random() * 0.2;
+      }
+      dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
+      dGeo.setAttribute('aRand', new THREE.BufferAttribute(dRnd, 4));
+      dGeo.setAttribute('aColor', new THREE.BufferAttribute(dCol, 3));
+      dGeo.setAttribute('aSize', new THREE.BufferAttribute(dSiz, 1));
+      const debrisMat = makeMaterial(0);
+      debrisMat.uniforms.uObjScale.value = 1.1;
+      const debris = new THREE.Points(dGeo, debrisMat);
+      debris.frustumCulled = false;
+      scene.add(debris);
 
       let mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', (e) => {
@@ -1550,34 +1785,68 @@
 
       let heroVisible = true;
       let rafId = null;
+      let ps = getProgress();
+      const clock = new THREE.Clock();
+
+      function applyChoreography(p){
+        let x, y, s;
+        if (narrow) {
+          x = lerp(1.0, 0, sm(0.0, 0.30, p));
+          y = lerp(0.9, 1.9, sm(0.0, 0.30, p));
+          s = lerp(0.8, 0.95, sm(0.0, 0.30, p));
+        } else {
+          x = lerp(0.46 * halfW, 0, sm(0.0, 0.30, p));
+          x = lerp(x, xEnd, sm(0.30, 0.52, p));
+          y = 0;
+          s = lerp(1, 1.3, sm(0.0, 0.30, p));
+          s = lerp(s, sEnd, sm(0.30, 0.52, p));
+        }
+        rig.position.set(x, y, 0);
+        rig.scale.setScalar(s);
+        globeMat.uniforms.uObjScale.value = s;
+        globeMat.uniforms.uDim.value = narrow ? lerp(0.38, 1, sm(0.1, 0.32, p)) : 1;
+        const t = uniformsShared.uTime.value;
+        globe.rotation.y = t * 0.08 + p * 3.6;
+        globe.rotation.x = Math.sin(t * 0.2) * 0.05 + p * 0.25;
+        wire.rotation.y = globe.rotation.y;
+        wire.rotation.x = globe.rotation.x;
+        ring.rotation.z = t * 0.07;
+        ring2.rotation.z = -t * 0.055;
+        const dis = sm(0.64, 1.0, p);
+        globeMat.uniforms.uDisint.value = dis * 0.56;
+        wireMat.opacity = 0.16 * (1 - dis);
+        ringMat.opacity = 0.4 * (1 - 0.8 * dis);
+        ring2Mat.opacity = 0.22 * (1 - 0.8 * dis);
+        debris.position.y = Math.sin(t * 0.15) * 0.25;
+        debris.rotation.z = t * 0.012;
+        debris.rotation.y = Math.sin(t * 0.05) * 0.12;
+      }
+
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver((entries) => {
           heroVisible = entries[0].isIntersecting;
-          if (heroVisible && rafId === null) animate();
+          if (heroVisible && rafId === null) { clock.getDelta(); animate(); }
         }, { threshold: 0 });
-        io.observe(canvas);
+        io.observe(heroEl);
       }
 
       function animate(){
         if (!heroVisible) { rafId = null; return; }
-        wireMesh.rotation.y += 0.0016;
-        wireMesh.rotation.x += 0.0005;
-        particles.rotation.y = wireMesh.rotation.y;
-        particles.rotation.x = wireMesh.rotation.x;
-        ring.rotation.z += 0.0011;
-        ring2.rotation.z -= 0.0009;
-        if(!isMobile){
-          camera.position.x += ((0.5 + mouseX * 1.2) - camera.position.x) * 0.02;
-          camera.position.y += (-mouseY * 1.0 - camera.position.y) * 0.02;
-          camera.lookAt(wireMesh.position);
+        uniformsShared.uTime.value += Math.min(clock.getDelta(), 0.05);
+        ps += (getProgress() - ps) * 0.1;
+        applyChoreography(ps);
+        updateTexts(ps);
+        if (!isMobile) {
+          camera.position.x += ((mouseX * 0.9) - camera.position.x) * 0.03;
+          camera.position.y += ((-mouseY * 0.7) - camera.position.y) * 0.03;
+          camera.lookAt(0, 0, 0);
         }
         renderer.render(scene, camera);
         rafId = requestAnimationFrame(animate);
       }
       animate();
     } catch(e) {
-      const fb = document.getElementById('radarFallback');
-      if (fb) fb.style.display = 'block';
+      textOnlyFallback();
     }
   }
   initHeroScene();
@@ -1589,11 +1858,11 @@
       opacity: 0, y: 30, duration: 1.1, stagger: 0.08,
       ease: 'power3.out', delay: 0.2
     });
-    gsap.from('.hero .eyebrow, .hero p, .hero-ctas', {
+    gsap.from('.hero-content .eyebrow, .hero-content p, .hero-content .hero-ctas', {
       opacity: 0, y: 20, duration: 0.9, stagger: 0.12, delay: 0.6, ease: 'power3.out'
     });
   } else if (typeof gsap !== 'undefined') {
-    gsap.from('.hero-headline, .hero .eyebrow, .hero p, .hero-ctas', {
+    gsap.from('.hero-headline, .hero-content .eyebrow, .hero-content p, .hero-content .hero-ctas', {
       opacity: 0, y: 30, duration: 1, stagger: 0.1, ease: 'power3.out'
     });
   }
