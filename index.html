@@ -766,6 +766,8 @@
     color:var(--accent);
   }
   .form-success.active{ display:block; }
+  .form-error{ border-color:rgba(231,120,100,0.6); color:#f0a898; }
+  #contactForm button[type="submit"][disabled]{ opacity:0.6; pointer-events:none; }
 
   /* ===== CAMO DIVIDER ===== */
   .camo-divider{
@@ -1226,7 +1228,9 @@
             Solicitar demonstração
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </button>
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
           <div class="form-success" id="formSuccess">Recebemos sua solicitação. Nossa equipe entra em contato em breve.</div>
+          <div class="form-success form-error" id="formError" role="alert">Não foi possível enviar agora. Fale com a gente pelo WhatsApp: (21) 97585-2568.</div>
         </form>
       </div>
     </div>
@@ -1257,7 +1261,7 @@
         <h4>Contato</h4>
         <ul>
           <li><a href="https://wa.me/5521975852568" target="_blank" rel="noopener">(21) 97585-2568</a></li>
-          <li><a href="mailto:contato@opstechbrasil.com.br">contato@opstechbrasil.com.br</a></li>
+          <li><a href="mailto:admin@opstechbrasil.com.br">admin@opstechbrasil.com.br</a></li>
         </ul>
       </div>
     </div>
@@ -1990,11 +1994,68 @@
   /* ===== FORM (no backend — swap action for real endpoint on hosting) ===== */
   const form = document.getElementById('contactForm');
   const success = document.getElementById('formSuccess');
+  const formError = document.getElementById('formError');
+  // Chave do Web3Forms (gerada em web3forms.com com admin@opstechbrasil.com.br). Vazia = envia pelo WhatsApp.
+  const WEB3FORMS_KEY = '';
+  const WHATSAPP_NUMBER = '5521975852568';
   if (form) {
-    form.addEventListener('submit', function(e){
+    form.addEventListener('submit', async function(e){
       e.preventDefault();
-      success.classList.add('active');
-      form.reset();
+      success.classList.remove('active');
+      formError.classList.remove('active');
+      const data = Object.fromEntries(new FormData(form));
+      if (data.botcheck) return;
+
+      const resumo = [
+        'Olá! Vim pelo site da OpsTech.',
+        'Nome: ' + (data.nome || ''),
+        'Empresa/Unidade: ' + (data.unidade || '-'),
+        'E-mail: ' + (data.email || ''),
+        'Telefone: ' + (data.telefone || '-'),
+        'Interesse: ' + (data.interesse || ''),
+        'Mensagem: ' + (data.mensagem || '-')
+      ].join('\n');
+
+      if (!WEB3FORMS_KEY) {
+        window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(resumo), '_blank', 'noopener');
+        success.textContent = 'Abrimos o WhatsApp com os seus dados. É só enviar a mensagem para falar com a nossa equipe.';
+        success.classList.add('active');
+        form.reset();
+        return;
+      }
+
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            subject: 'Novo lead pelo site: ' + (data.interesse || 'OpsTech'),
+            from_name: 'Site OpsTech Brasil',
+            replyto: data.email,
+            nome: data.nome,
+            empresa_unidade: data.unidade,
+            email: data.email,
+            telefone: data.telefone,
+            interesse: data.interesse,
+            mensagem: data.mensagem
+          })
+        });
+        const json = await res.json();
+        if (res.ok && json.success) {
+          success.textContent = 'Recebemos sua solicitação. Nossa equipe entra em contato em breve.';
+          success.classList.add('active');
+          form.reset();
+        } else {
+          formError.classList.add('active');
+        }
+      } catch (err) {
+        formError.classList.add('active');
+      } finally {
+        btn.disabled = false;
+      }
     });
   }
 
